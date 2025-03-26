@@ -214,8 +214,13 @@ export async function GET(request: Request) {
     folder: '/tmp',
     filename: 'thumbnail.png',
     timemarks: ['25%']
-  })
+  });
 
+  await new Promise(r => {
+    cmd.on('end', r);
+    cmd.run();
+  });
+  
   return Response.json({
     description,
     thumbnail: `/file/thumbnail.png?t=${Date.now()}`,
