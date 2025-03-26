@@ -25,7 +25,7 @@ async function listFilesAndDirectories(dirPath: string): Promise<any> {
 }
 
 export async function GET() {
-  const directoryPath = path.join(process.cwd()); // Thay target-directory bằng thư mục bạn muốn liệt kê
+  const directoryPath =  '/var/task/node_modules/ffmpeg-ffprobe-static/'//path.join(process.cwd()); // Thay target-directory bằng thư mục bạn muốn liệt kê
 
   const result = await listFilesAndDirectories(directoryPath);
   return Response.json(result);
