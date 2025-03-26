@@ -5,11 +5,13 @@ import YTDlpWrap from "yt-dlp-wrap";
 import { getFbVideoInfo } from "fb-downloader-scrapper";
 import he from "he";
 import {ffmpegPath, ffprobePath} from 'ffmpeg-ffprobe-static';
-import {FfmpegCommand} from 'fluent-ffmpeg';
+import a from 'fluent-ffmpeg';
 
 console.log({
-  FfmpegCommand
+  a
 })
+
+const FfmpegCommand: any = {};
 
 async function downloadYoutube(
   url: string,
