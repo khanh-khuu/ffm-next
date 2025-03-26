@@ -1,0 +1,42 @@
+name: Make
+run-name: ${{ github.event.inputs.description }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      vid_url:
+        description: 'The URL to process'
+        required: true
+      cmd:
+        description: 'Command'
+        required: true
+      description:
+        description: 'Description'
+        required: true
+
+
+jobs:
+  process-vid:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Download Vid
+      run: |
+        wget -v -O input.mp4 ${{ github.event.inputs.vid_url }}
+
+    - name: Setup FFMPEG
+      uses: AnimMouse/setup-ffmpeg@v1
+      with:
+        version: 7.1
+
+    - name: Process Vid
+      run: ${{ github.event.inputs.cmd }}
+
+    - name: Upload to artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: output.mp4
+        path: output.mp4
