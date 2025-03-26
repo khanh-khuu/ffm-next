@@ -7,6 +7,10 @@ import he from "he";
 import {ffmpegPath, ffprobePath} from 'ffmpeg-ffprobe-static';
 import {FfmpegCommand} from 'fluent-ffmpeg';
 
+console.log({
+  FfmpegCommand
+})
+
 async function downloadYoutube(
   url: string,
   outputPath: string
