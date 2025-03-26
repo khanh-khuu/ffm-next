@@ -4,16 +4,6 @@ import fs from "fs";
 import YTDlpWrap from "yt-dlp-wrap";
 import { getFbVideoInfo } from "fb-downloader-scrapper";
 import he from "he";
-import { ffmpegPath, ffprobePath } from "ffmpeg-ffprobe-static";
-import ffmpeg from "fluent-ffmpeg";
-
-
-console.log({ffmpegPath, ffprobePath});
-
-
-ffmpeg.setFfmpegPath(ffmpegPath!);
-ffmpeg.setFfprobePath(ffprobePath!);
-
 
 async function downloadYoutube(
   url: string,
@@ -211,25 +201,8 @@ export async function GET(request: Request) {
 
   const description = await downloadVideo(downloadUrl, outputPath);
 
-  await new Promise((resolve, reject) => {
-    ffmpeg(outputPath)
-      .on("end", function (err) {
-        if (err) reject(err);
-        else resolve(null);
-      })
-      .on("error", function (err) {
-        reject(err);
-      })
-      .screenshots({
-        count: 1,
-        folder: "/tmp",
-        filename: "thumbnail.png",
-        timemarks: ["25%"],
-      });
-  });
-
-  return Response.json({
+return Response.json({
     description,
-    thumbnail: `/file/thumbnail.png?t=${Date.now()}`,
+    file: `/file/input.mp4?t=${Date.now()}`,
   });
 }

@@ -11,8 +11,11 @@ import {
     TextInput,
   } from "@mantine/core";
   import axios from "axios";
-  import { useState } from "react";
+  import { useRef, useState } from "react";
   import ReactCrop, { Crop } from "react-image-crop";
+  import {VideoThumbnailGenerator} from "browser-video-thumbnail-generator";
+import removeHashTag from "@/helper/removeHashTag";
+import removeEmojis from "@/helper/removeEmoji";
   
   export default function Maker() {
     const [url, setUrl] = useState(
@@ -21,6 +24,8 @@ import {
     const [description, setDescription] = useState("");
     const [caption, setCaption] = useState("");
     const [thumbnail, setThumbnail] = useState("");
+    const generator = useRef<VideoThumbnailGenerator | null>(null);
+    const [loading, setLoading] = useState(false);
   
     const [crop, setCrop] = useState<Crop>({
       unit: "%",
@@ -31,13 +36,21 @@ import {
     });
   
     async function startImport() {
+      
+      generator.current?.revokeUrls();
+      setLoading(true);
       const {
-        data: { description, thumbnail },
+        data: { description, file },
       } = await axios.get("/file/import?url=" + url);
+
       setUrl("");
       setDescription(description);
-      setCaption(description);
-      setThumbnail(thumbnail);
+      setCaption(removeEmojis(removeHashTag(description)).trim());
+
+      generator.current = new VideoThumbnailGenerator(file);
+      const thumbnail = await generator.current?.getThumbnail()
+      setThumbnail(thumbnail?.thumbnail || '');
+      setLoading(false);
       setCrop({
         unit: "%",
         x: 0,
@@ -48,11 +61,13 @@ import {
     }
   
     async function make() {
+      setLoading(true);
       await axios.post(`/file/make`, {
         crop,
         description,
         caption,
       });
+      setLoading(false);
       setCrop({
         unit: "%",
         x: 0,
@@ -73,14 +88,14 @@ import {
             value={url}
             onChange={(e) => setUrl(e.target.value)}
           />
-          <Button onClick={startImport} disabled={!url}>
+          <Button onClick={startImport} disabled={!url} loading={loading}>
             Import
           </Button>
         </Group>
   
         {thumbnail && (
-          <Stack>
-            <Flex justify={'center'} style={{ opacity: 0.04}}>
+          <Stack mt="xl">
+            <Flex justify={'center'}>
               <ReactCrop
                 crop={crop}
                 onChange={(_crop, percentCrop) => setCrop(percentCrop)}
@@ -90,18 +105,20 @@ import {
             </Flex>
   
             <Textarea
-              placeholder="Description..."
+              label="Description"
+              placeholder="Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
   
             <Textarea
-              placeholder="Caption..."
+              label="Caption on video"
+              placeholder="Caption"
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
             />
   
-            <Button onClick={make}>Make</Button>
+            <Button onClick={make} loading={loading} disabled={loading}>Make</Button>
           </Stack>
         )}
       </Box>

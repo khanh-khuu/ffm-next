@@ -1,11 +1,17 @@
 'use client'
 
 import { ActionIcon, Anchor, Box, CopyButton, Table } from "@mantine/core";
-import { IconDownload } from "@tabler/icons-react";
+import { IconAlertTriangle, IconCheck, IconCopy, IconDownload } from "@tabler/icons-react";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { DateTime } from 'luxon';
+import _ from "lodash";
 
 const { Tbody, Tr, Td, Thead, Th } = Table;
+
+function formatDate(dateStr: string) {
+  return DateTime.fromISO(dateStr).toFormat('ff');
+}
 
 export default function FileList() {
   const [runs, setRuns] = useState<Workflowrun[]>([]);
@@ -24,8 +30,8 @@ export default function FileList() {
 
     const timer = setInterval(async () => {
       const { data } = await axios.get<WorkflowrunResponse>("/github/runs");
-      setRuns(data.workflow_runs);
-    }, 5000);
+      setRuns(_.take(data.workflow_runs, 10));
+    }, 3000);
 
     return () => {
       clearInterval(timer);
@@ -37,41 +43,35 @@ export default function FileList() {
       <Table layout="fixed">
         <Thead>
           <Tr>
-            {/* <Th>Run ID</Th> */}
             <Th>Name</Th>
-            <Th>Status</Th>
-            <Th>Conclusion</Th>
-            <Th>Created At</Th>
-            <Th>Updated At</Th>
-            <Th w="60">Artifact</Th>
+            {/* <Th>Created At</Th> */}
+            <Th ta="center" w="180">Updated At</Th>
+            <Th ta="center" w="130">Status</Th>
+            <Th ta="center" w="100">Conclusion</Th>
           </Tr>
         </Thead>
         <Tbody>
           {runs.map((x) => (
             <Tr key={x.id}>
-              {/* <Td>{x.id}</Td> */}
               <Td>
                 <CopyButton value={x.name}>
-                  {() => <span>{x.name}</span>}
+                  {({copied, copy}) => <Box onClick={copy} style={{
+                    background: copied ? 'green' : 'none'
+                  }}>{x.name}</Box>}
                 </CopyButton>
               </Td>
-              <Td>{x.status}</Td>
-              <Td>{x.conclusion}</Td>
-              <Td>{x.created_at}</Td>
-              <Td>{x.updated_at}</Td>
-              <Td ta="center">
-                {x.conclusion === "success" && (
-                  <Anchor
+              <Td ta="center">{formatDate(x.updated_at)}</Td>
+              <Td ta="center">{x.status}</Td>
+              <Td ta="center">{x.conclusion === 'success' ? <Anchor
                     href={`/github/artifacts/${x.id}`}
                     target="_blank"
                     underline="never"
                   >
-                    <ActionIcon>
+                    <ActionIcon variant="light" color="green">
                       <IconDownload />
                     </ActionIcon>
-                  </Anchor>
-                )}
-              </Td>
+                  </Anchor> : x.conclusion === 'failure' ? <IconAlertTriangle color="red" /> : x.conclusion}</Td>
+              {/* <Td>{formatDate(x.created_at)}</Td> */}
             </Tr>
           ))}
         </Tbody>
