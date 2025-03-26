@@ -8,8 +8,12 @@ import { ffmpegPath, ffprobePath } from "ffmpeg-ffprobe-static";
 import ffmpeg from "fluent-ffmpeg";
 
 
+console.log({ffmpegPath, ffprobePath});
+
+
 ffmpeg.setFfmpegPath(ffmpegPath!);
 ffmpeg.setFfprobePath(ffprobePath!);
+
 
 async function downloadYoutube(
   url: string,

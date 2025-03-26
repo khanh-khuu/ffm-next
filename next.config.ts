@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   webpack: (config) => {
     config.resolve.alias['@'] = path.resolve(process.cwd(), 'src');
+    config.externals = [...config.externals, 'ffmpeg-ffprobe-static']
     return config;
   },
   output: "standalone"
