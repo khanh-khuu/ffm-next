@@ -19,7 +19,7 @@ import removeEmojis from "@/helper/removeEmoji";
   
   export default function Maker() {
     const [url, setUrl] = useState(
-      "https://www.tiktok.com/@funnyvideo_offlina/video/7330887021814107425?q=funny%20dog&t=1742896078195"
+      ""
     );
     const [description, setDescription] = useState("");
     const [caption, setCaption] = useState("");
