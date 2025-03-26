@@ -4,8 +4,8 @@ import fs from "fs";
 import YTDlpWrap from "yt-dlp-wrap";
 import { getFbVideoInfo } from "fb-downloader-scrapper";
 import he from "he";
-import {ffmpegPath, ffprobePath} from 'ffmpeg-ffprobe-static';
-import ffmpeg from 'fluent-ffmpeg';
+import { ffmpegPath, ffprobePath } from "ffmpeg-ffprobe-static";
+import ffmpeg from "fluent-ffmpeg";
 
 ffmpeg.setFfmpegPath(ffmpegPath!);
 ffmpeg.setFfprobePath(ffprobePath!);
@@ -68,10 +68,10 @@ async function downloadTiktok(url: string, outputPath: string): Promise<any> {
   fileResponse.data.pipe(writer);
 
   return new Promise((resolve) => {
-    writer.on('finish', () => {
+    writer.on("finish", () => {
       resolve(desc);
-    })
-  })
+    });
+  });
 }
 
 async function downloadKuaishou(
@@ -202,28 +202,29 @@ export async function GET(request: Request) {
       { status: 400 }
     );
 
-  const outputPath = path.join("/tmp", 'input.mp4');
+  const outputPath = path.join("/tmp", "input.mp4");
 
   const description = await downloadVideo(downloadUrl, outputPath);
 
-  const cmd = ffmpeg();
-  
-  cmd.addInput(outputPath);
-  cmd.screenshot({
-    count: 1,
-    folder: '/tmp',
-    filename: 'thumbnail.png',
-    timemarks: ['25%']
+  await new Promise((resolve, reject) => {
+    ffmpeg(outputPath)
+      .on("end", function (err) {
+        if (err) reject(err);
+        else resolve(null);
+      })
+      .on("error", function (err) {
+        reject(err);
+      })
+      .screenshots({
+        count: 1,
+        folder: "/tmp",
+        filename: "thumbnail.png",
+        timemarks: ["25%"],
+      });
   });
 
-  await new Promise(r => {
-    cmd.on('end', r);
-    cmd.run();
-  });
-  
   return Response.json({
     description,
     thumbnail: `/file/thumbnail.png?t=${Date.now()}`,
   });
-
-};
+}
