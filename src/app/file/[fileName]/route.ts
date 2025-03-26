@@ -2,6 +2,8 @@ import path from "path";
 import fs from 'fs';
 import mime from 'mime';
 
+export const maxDuration = 60;
+
 export function GET(request: Request, { params: { fileName } }: any) {
   const download = new URL(request.url).searchParams.get("download");
 
