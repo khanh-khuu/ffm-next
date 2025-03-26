@@ -6,9 +6,9 @@ import { NextRequest } from "next/server";
 import { GITHUB_ENDPOINT } from "@/constant";
 // import mime from 'mime';
 
-export async function GET (request: NextRequest, { params: {runId} }: any) {
-  const download = new URL(request.url).searchParams.get('download');
-
+export async function GET (request: NextRequest, { params }: any) {
+  const {runId} = await params;
+  
   if (!process.env.GITHUB_TOKEN) {
     return Response.json(
       {
@@ -61,20 +61,27 @@ export async function GET (request: NextRequest, { params: {runId} }: any) {
   const outputFile = path.join('/tmp', 'output.mp4');
 
   // fs.accessSync(outputFile);
-  const fileBuffer = fs.readFileSync(outputFile);
+  // const fileBuffer = fs.readFileSync(outputFile);
   const fileStat = fs.statSync(outputFile);
   // const fileMime = mime.getType(outputFile);
   // console.log(fileMime);
 
   const headers: Record<string, string> = {
+    'Content-Disposition': `attachment; filename=${runId}.mp4`,
     "Content-Type": "video/mp4", // || fileMime || "application/octet-stream",
     "Content-Length": fileStat.size.toString(),
   };
 
-  if (download !== null) {
-    headers["Content-Disposition"] = `attachment; filename="${runId}.mp4"`;
-  }
-  return new Response(fileBuffer, {
-    headers,
-  });
+  const fileStream = fs.createReadStream(outputFile);
+
+  return new Response(new ReadableStream({
+    start(controller) {
+      fileStream.on('data', (chunk) => controller.enqueue(chunk));
+      fileStream.on('end', () => controller.close());
+      fileStream.on('error', (error) => controller.error(error));
+    },
+    cancel() {
+      fileStream.destroy();
+    },
+  }), { headers });
 }
