@@ -1,3 +1,5 @@
+'use client'
+
 import { ActionIcon, Anchor, Box, CopyButton, Table } from "@mantine/core";
 import { IconDownload } from "@tabler/icons-react";
 import axios from "axios";
