@@ -4,17 +4,18 @@ import fs from "fs";
 import YTDlpWrap from "yt-dlp-wrap";
 import { getFbVideoInfo } from "fb-downloader-scrapper";
 import he from "he";
-import { ffmpegPath, ffprobePath } from "ffmpeg-ffprobe-static";
+// import { ffmpegPath, ffprobePath } from "ffmpeg-ffprobe-static";
+import pathToFfmpeg from 'ffmpeg-static';
+import pathToFfProbe from 'ffprobe-static';
 import ffmpeg from "fluent-ffmpeg";
 
-
 console.log({
-  ffmpegPath,
-  ffprobePath
+  pathToFfmpeg,
+  pathToFfProbe: pathToFfProbe.path
 });
 
-ffmpeg.setFfmpegPath(ffmpegPath!);
-ffmpeg.setFfprobePath(ffprobePath!);
+ffmpeg.setFfmpegPath(pathToFfmpeg!);
+ffmpeg.setFfprobePath(pathToFfProbe.path);
 
 async function downloadYoutube(
   url: string,
