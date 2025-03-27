@@ -74,8 +74,8 @@ export default function Maker({ avatars }: { avatars: string[] }) {
     setDescription(description);
     setCaption(removeEmojis(removeHashTag(description)).trim());
 
-    generator.current = new VideoThumbnailGenerator(file);
     try {
+      generator.current = new VideoThumbnailGenerator(file);
       const thumbnail = await generator.current?.getThumbnail();
       setThumbnail(thumbnail?.thumbnail || "");
       if (thumbnail) {
