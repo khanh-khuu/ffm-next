@@ -46,18 +46,14 @@ export default function FileList() {
     <Box>
       <audio id="notificationSound" src="/done.mp3"></audio>
       <Table layout="fixed">
-        <Thead>
+        {/* <Thead>
           <Tr>
             <Th>Name</Th>
-            {/* <Th>Created At</Th> */}
-            {/* <Th ta="center" w="25%">
-              Updated At
-            </Th> */}
             <Th ta="center" w="100">
               Status
             </Th>
           </Tr>
-        </Thead>
+        </Thead> */}
         <Tbody>
           {runs.map((x) => (
             <Tr key={x.id}>
