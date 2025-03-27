@@ -12,11 +12,13 @@ export async function POST(request: Request) {
     description,
     caption,
     avatar,
+    speed,
   }: {
     crop: Crop;
     description: string;
     caption: string;
     avatar: string;
+    speed: string;
   } = await request.json();
 
   const caps = removeEmojis(removeHashTag(caption)).trim();
@@ -35,12 +37,12 @@ export async function POST(request: Request) {
 
   const fontSize = 54;
 
-  let logoPosition = 0.62;
-  let textPosition = 0.70;
+  let logoPosition = 0.66;
+  let textPosition = 0.71;
 
   if (avatar === "transparent.png") {
-    logoPosition = 0.62;
-    textPosition = 0.62;
+    logoPosition = 0.66;
+    textPosition = 0.66;
   }
 
   const captions = captionsArr.map((line, idx) => {
@@ -63,10 +65,12 @@ export async function POST(request: Request) {
     `[output][logo]overlay=(main_w-overlay_w)/2:(main_h-overlay_h)*${logoPosition}[output]`,
     // `[full]scale=${width}:${height},setsar=1:1,format=gbrp[output]`,
     ...captions,
-    `[output]pad=iw:ih+ih*0.15:(iw-iw)/2:(ih*0.15)/2:black`,
+    `[output]pad=iw:ih+ih*0.15:(iw-iw)/2:(ih*0.15)/2:black[output]`,
+    `[output]setpts=PTS/${speed}[video]`,
+    `[0:a]atempo=${speed}[audio]`,
   ].join(";");
 
-  cmd += `" -shortest output.mp4`;
+  cmd += `" -map "[video]" -map "[audio]" -shortest output.mp4`;
 
   if (!process.env.GITHUB_TOKEN) {
     return Response.json(

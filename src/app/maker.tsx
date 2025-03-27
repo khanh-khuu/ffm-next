@@ -6,6 +6,7 @@ import {
   Flex,
   Group,
   Image,
+  NumberInput,
   SegmentedControl,
   Stack,
   Textarea,
@@ -22,6 +23,8 @@ export default function Maker({ avatars }: { avatars: string[] }) {
   const [url, setUrl] = useState("");
   const [description, setDescription] = useState("");
   const [caption, setCaption] = useState("");
+  const [originalDuration, setOriginalDuration] = useState(0);
+  const [duration, setDuration] = useState(0);
   const [avatar, setAvatar] = useState("transparent.png");
   const [thumbnail, setThumbnail] = useState("");
   const generator = useRef<VideoThumbnailGenerator | null>(null);
@@ -75,9 +78,10 @@ export default function Maker({ avatars }: { avatars: string[] }) {
     generator.current?.revokeUrls();
     setLoading(true);
     const {
-      data: { description, thumbnail },
+      data: { description, thumbnail, duration },
     } = await axios.get("/file/import?url=" + url);
-
+    setOriginalDuration(duration);
+    setDuration(duration);
     setUrl("");
     setDescription(removeNonLatinKeepEmojiAndHashtags(description));
     setCaption(removeEmojis(removeHashTag(removeNonLatinKeepEmojiAndHashtags(description))).trim());
@@ -105,8 +109,11 @@ export default function Maker({ avatars }: { avatars: string[] }) {
       description,
       caption,
       avatar,
+      speed: (duration / originalDuration).toFixed(1)
     });
     setLoading(false);
+    setDuration(0);
+    setOriginalDuration(0);
     setCrop({
       unit: "%",
       x: 0,
@@ -156,6 +163,13 @@ export default function Maker({ avatars }: { avatars: string[] }) {
             placeholder="Caption"
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
+          />
+
+          <NumberInput
+            label={`New duration (original: ${originalDuration}s)`}
+            placeholder="New Duration"
+            value={duration}
+            onChange={(val) => setDuration(Number(val))}
           />
 
           <SegmentedControl

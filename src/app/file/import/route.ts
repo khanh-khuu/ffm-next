@@ -202,6 +202,13 @@ export async function GET(request: Request) {
 
   const description = await downloadVideo(downloadUrl, outputPath);
 
+  const videoDuration: number = await new Promise((resolve, reject) => {
+    ffmpeg.ffprobe(outputPath, function(err, metadata) {
+      if (err) reject(err);
+      else resolve(metadata.format.duration!);
+    });
+  });
+
   await new Promise((resolve) => {
     ffmpeg(outputPath)
       .on("end", resolve)
@@ -217,5 +224,6 @@ export async function GET(request: Request) {
     description,
     // file: `/file/input.mp4?t=${Date.now()}`,
     thumbnail: `/file/thumbnail.png?t=${Date.now()}`,
+    duration: videoDuration,
   });
 }
