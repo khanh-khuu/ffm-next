@@ -33,8 +33,10 @@ export async function POST(request: Request) {
     return removeEmojis(chunk.join(" ")).trim();
   });
 
+  const fontSize = 54;
+
   let logoPosition = 0.62;
-  let textPosition = 0.76;
+  let textPosition = 0.70;
 
   if (avatar === "transparent.png") {
     logoPosition = 0.62;
@@ -42,7 +44,7 @@ export async function POST(request: Request) {
   }
 
   const captions = captionsArr.map((line, idx) => {
-    return `[output]drawtext=fontfile=/lib/LeagueSpartan-Bold.ttf:text='${line}':x=(w-text_w)*0.5:y=(h-text_h)*${textPosition}+(${idx}*54):fontsize=48:fontcolor=white:shadowcolor=black:shadowx=2:shadowy=2[output]`;
+    return `[output]drawtext=fontfile=/lib/LeagueSpartan-Bold.ttf:text='${line}':x=(w-text_w)*0.5:y=(h-text_h)*${textPosition}+(${idx}*54):fontsize=${fontSize}:fontcolor=white:shadowcolor=black:shadowx=2:shadowy=2[output]`;
   });
 
   let cmd = `ffmpeg -i input.mp4 -i ./public/avatars/${avatar} -filter_complex "`;
