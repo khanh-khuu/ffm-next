@@ -75,12 +75,16 @@ export default function Maker({ avatars }: { avatars: string[] }) {
     setCaption(removeEmojis(removeHashTag(description)).trim());
 
     generator.current = new VideoThumbnailGenerator(file);
-    const thumbnail = await generator.current?.getThumbnail();
-    setThumbnail(thumbnail?.thumbnail || "");
-    setLoading(false);
-    if (thumbnail) {
-      rezoneCrop(thumbnail.width, thumbnail.height);
+    try {
+      const thumbnail = await generator.current?.getThumbnail();
+      setThumbnail(thumbnail?.thumbnail || "");
+      if (thumbnail) {
+        rezoneCrop(thumbnail.width, thumbnail.height);
+      }
+    } catch (err) {
+      console.log(err);
     }
+    setLoading(false);
   }
 
   async function make() {
@@ -102,7 +106,7 @@ export default function Maker({ avatars }: { avatars: string[] }) {
     setDescription("");
     setCaption("");
     setThumbnail("");
-    setAvatar('transparent.png');
+    setAvatar("transparent.png");
   }
 
   return (
@@ -147,8 +151,8 @@ export default function Maker({ avatars }: { avatars: string[] }) {
             data={avatars.map((x) => ({
               value: x,
               label: (
-                <Flex justify={'center'} align={'center'}>
-                <Image w={60} src={'/avatars/' + x} />
+                <Flex justify={"center"} align={"center"}>
+                  <Image w={60} src={"/avatars/" + x} />
                 </Flex>
               ),
             }))}
