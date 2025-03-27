@@ -45,8 +45,8 @@ export default function FileList() {
           <Tr>
             <Th>Name</Th>
             {/* <Th>Created At</Th> */}
-            <Th ta="center" w="180">Updated At</Th>
-            <Th ta="center" w="130">Status</Th>
+            <Th ta="center" w="25%">Updated At</Th>
+            <Th ta="center" w="100">Status</Th>
             <Th ta="center" w="100">Conclusion</Th>
           </Tr>
         </Thead>
