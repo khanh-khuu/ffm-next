@@ -7,7 +7,7 @@ export default function HomePage() {
   const avatars = getAvatars();
 
   return (
-    <Box style={{ maxWidth: 900 }} mx="auto" my="lg">
+    <Box style={{ maxWidth: 900 }} mx="auto" my="xl">
       <Card>
         <Maker avatars={avatars} />
         <Box mt="xl">
