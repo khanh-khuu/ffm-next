@@ -57,6 +57,13 @@ export default function Maker({ avatars }: { avatars: string[] }) {
       x = (100 - w) / 2;
     }
 
+    if (w === 0 || h === 0) {
+      x = 0;
+      y = 0;
+      w = 100;
+      h = 100;
+    }
+
     setCrop({
       unit: "%",
       x,
@@ -78,7 +85,7 @@ export default function Maker({ avatars }: { avatars: string[] }) {
     generator.current?.revokeUrls();
     setLoading(true);
     const {
-      data: { description, thumbnail, duration },
+      data: { description, thumbnail, duration, height, width },
     } = await axios.get("/file/import?url=" + url);
     setOriginalDuration(duration);
     setDuration(duration);
@@ -93,8 +100,8 @@ export default function Maker({ avatars }: { avatars: string[] }) {
       setThumbnail(thumbnail);
 
       if (thumbnail) {
-        const { naturalHeight, naturalWidth }  = thumbnailRef.current! as HTMLImageElement;
-        rezoneCrop(naturalWidth, naturalHeight);
+        // const { naturalHeight, naturalWidth }  = thumbnailRef.current! as HTMLImageElement;
+        rezoneCrop(width, height);
       }
     } catch (err) {
       console.log(err);

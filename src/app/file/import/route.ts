@@ -202,10 +202,19 @@ export async function GET(request: Request) {
 
   const description = await downloadVideo(downloadUrl, outputPath);
 
-  const videoDuration: number = await new Promise((resolve, reject) => {
-    ffmpeg.ffprobe(outputPath, function(err, metadata) {
+  const { duration, height, width } = await new Promise<{ duration: number, height: number, width: number }>((resolve, reject) => {
+    ffmpeg.ffprobe(outputPath, function (err, metadata) {
       if (err) reject(err);
-      else resolve(metadata.format.duration!);
+      else {
+        const height = metadata.streams.find((x) => x.height)?.height || 0;
+        const width = metadata.streams.find((x) => x.width)?.width || 0;
+
+        resolve({
+          duration: metadata.format.duration!,
+          height,
+          width,
+        });
+      }
     });
   });
 
@@ -224,6 +233,8 @@ export async function GET(request: Request) {
     description,
     // file: `/file/input.mp4?t=${Date.now()}`,
     thumbnail: `/file/thumbnail.png?t=${Date.now()}`,
-    duration: videoDuration,
+    duration,
+    height,
+    width,
   });
 }
