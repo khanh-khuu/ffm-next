@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     fs.mkdirSync(path.join('/tmp', 'media'));
   }
 
-  const fileName = Date.now() + (file as File).name;
+  const fileName = Date.now() + '-' + (file as File).name;
 
   const outputPath = path.join('/tmp', 'media', fileName);
   fs.writeFileSync(outputPath, buffer);
