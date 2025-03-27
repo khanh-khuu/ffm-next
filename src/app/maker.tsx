@@ -3,6 +3,7 @@
 import {
   Box,
   Button,
+  FileButton,
   Flex,
   Group,
   Image,
@@ -15,9 +16,10 @@ import {
 import axios from "axios";
 import { useRef, useState } from "react";
 import ReactCrop, { Crop } from "react-image-crop";
-import { VideoThumbnailGenerator } from "browser-video-thumbnail-generator";
+// import { VideoThumbnailGenerator } from "browser-video-thumbnail-generator";
 import removeHashTag from "@/helper/removeHashTag";
 import removeEmojis from "@/helper/removeEmoji";
+import { IconUpload } from "@tabler/icons-react";
 
 export default function Maker({ avatars }: { avatars: string[] }) {
   const [url, setUrl] = useState("");
@@ -27,7 +29,7 @@ export default function Maker({ avatars }: { avatars: string[] }) {
   const [duration, setDuration] = useState(0);
   const [avatar, setAvatar] = useState("transparent.png");
   const [thumbnail, setThumbnail] = useState("");
-  const generator = useRef<VideoThumbnailGenerator | null>(null);
+  // const generator = useRef<VideoThumbnailGenerator | null>(null);
   const [loading, setLoading] = useState(false);
   const thumbnailRef = useRef(null);
 
@@ -74,15 +76,47 @@ export default function Maker({ avatars }: { avatars: string[] }) {
   }
 
   function removeNonLatinKeepEmojiAndHashtags(text: string) {
-    let cleanedText = text.replace(/[^\u0000-\u007F\u00A0-\u00FF\u0100-\u017F\u0180-\u024F\u0250-\u02AF\u1E00-\u1EFF\u2C60-\u2C7F\uA720-\uA7FF\u{1F300}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}#]/gu, ''); 
-    cleanedText = cleanedText.replace(/#(?![a-zA-Z0-9])/g, '');
-    cleanedText = cleanedText.replace(/#+/g, '#'); 
-    cleanedText = cleanedText.replace(/\s+/g, ' '); 
-    return cleanedText; 
-  } 
+    let cleanedText = text.replace(
+      /[^\u0000-\u007F\u00A0-\u00FF\u0100-\u017F\u0180-\u024F\u0250-\u02AF\u1E00-\u1EFF\u2C60-\u2C7F\uA720-\uA7FF\u{1F300}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}#]/gu,
+      ""
+    );
+    cleanedText = cleanedText.replace(/#(?![a-zA-Z0-9])/g, "");
+    cleanedText = cleanedText.replace(/#+/g, "#");
+    cleanedText = cleanedText.replace(/\s+/g, " ");
+    return cleanedText;
+  }
 
+  async function uploadFile(file: File | null) {
+    if (!file) return;
+    setLoading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    const {
+      data: { description, thumbnail, duration, height, width },
+    } = await axios.postForm("/file/upload", formData);
+    setOriginalDuration(duration);
+    setDuration(duration);
+    setUrl("");
+    setDescription(removeNonLatinKeepEmojiAndHashtags(description));
+    setCaption(
+      removeEmojis(
+        removeHashTag(removeNonLatinKeepEmojiAndHashtags(description))
+      ).trim()
+    );
+
+    try {
+      setThumbnail(thumbnail);
+
+      if (thumbnail) {
+        rezoneCrop(width, height);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+    setLoading(false);
+  }
   async function startImport() {
-    generator.current?.revokeUrls();
+    // generator.current?.revokeUrls();
     setLoading(true);
     const {
       data: { description, thumbnail, duration, height, width },
@@ -91,7 +125,11 @@ export default function Maker({ avatars }: { avatars: string[] }) {
     setDuration(duration);
     setUrl("");
     setDescription(removeNonLatinKeepEmojiAndHashtags(description));
-    setCaption(removeEmojis(removeHashTag(removeNonLatinKeepEmojiAndHashtags(description))).trim());
+    setCaption(
+      removeEmojis(
+        removeHashTag(removeNonLatinKeepEmojiAndHashtags(description))
+      ).trim()
+    );
 
     try {
       // generator.current = new VideoThumbnailGenerator(file);
@@ -116,7 +154,7 @@ export default function Maker({ avatars }: { avatars: string[] }) {
       description,
       caption,
       avatar,
-      speed: (originalDuration / duration).toFixed(1)
+      speed: (originalDuration / duration).toFixed(1),
     });
     setLoading(false);
     setDuration(0);
@@ -142,9 +180,20 @@ export default function Maker({ avatars }: { avatars: string[] }) {
           value={url}
           onChange={(e) => setUrl(e.target.value)}
         />
-        <Button onClick={startImport} disabled={!url || !url.startsWith('https')} loading={loading}>
+        <Button
+          onClick={startImport}
+          disabled={!url || !url.startsWith("https") || loading}
+          loading={loading}
+        >
           Import
         </Button>
+        <FileButton onChange={(file) => uploadFile(file)} accept="video/mp4">
+          {(props) => (
+            <Button {...props} variant="subtle" loading={loading} disabled={loading}>
+              <IconUpload />
+            </Button>
+          )}
+        </FileButton>
       </Group>
 
       {thumbnail && (
@@ -154,7 +203,11 @@ export default function Maker({ avatars }: { avatars: string[] }) {
               crop={crop}
               onChange={(_crop, percentCrop) => setCrop(percentCrop)}
             >
-              <Image ref={thumbnailRef} src={thumbnail} style={{ width: 300 }} />
+              <Image
+                ref={thumbnailRef}
+                src={thumbnail}
+                style={{ width: 300 }}
+              />
             </ReactCrop>
           </Flex>
 
