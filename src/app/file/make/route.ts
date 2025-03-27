@@ -38,7 +38,7 @@ export async function POST(request: Request) {
   const fontSize = 54;
 
   let logoPosition = 0.66;
-  let textPosition = 0.71;
+  let textPosition = 0.75;
 
   if (avatar === "transparent.png") {
     logoPosition = 0.66;
