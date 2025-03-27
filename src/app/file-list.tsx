@@ -14,29 +14,29 @@ import _ from "lodash";
 
 const { Tbody, Tr, Td, Thead, Th } = Table;
 
-function formatDate(dateStr: string) {
-  return DateTime.fromISO(dateStr).toFormat("ff");
-}
+// function formatDate(dateStr: string) {
+//   return DateTime.fromISO(dateStr).toFormat("ff");
+// }
 
 export default function FileList() {
   const [runs, setRuns] = useState<Workflowrun[]>([]);
 
-  function playSound() {
-    const audio = document.getElementById("notificationSound");
-    (audio! as HTMLAudioElement).pause();
-    (audio! as HTMLAudioElement).currentTime = 0;
-    (audio! as HTMLAudioElement).play();
-  }
+  // function playSound() {
+  //   const audio = document.getElementById("notificationSound");
+  //   (audio! as HTMLAudioElement).pause();
+  //   (audio! as HTMLAudioElement).currentTime = 0;
+  //   (audio! as HTMLAudioElement).play();
+  // }
 
   useEffect(() => {
     axios.get<WorkflowrunResponse>("/github/runs").then(({ data }) => {
-      setRuns(data.workflow_runs);
+      setRuns(_.take(data.workflow_runs, 10));
     });
 
     const timer = setInterval(async () => {
       const { data } = await axios.get<WorkflowrunResponse>("/github/runs");
       setRuns(_.take(data.workflow_runs, 10));
-    }, 3000);
+    }, 5000);
 
     return () => {
       clearInterval(timer);
@@ -44,7 +44,7 @@ export default function FileList() {
   }, []);
   return (
     <Box>
-      <audio id="notificationSound" src="/done.mp3"></audio>
+      {/* <audio id="notificationSound" src="/done.mp3"></audio> */}
       <Table layout="fixed">
         {/* <Thead>
           <Tr>
@@ -72,9 +72,13 @@ export default function FileList() {
                 </CopyButton>
               </Td>
               {/* <Td ta="center">{formatDate(x.updated_at)}</Td> */}
-              {!x.conclusion && <Td ta="center">{x.status}</Td>}
+              {!x.conclusion && (
+                <Td ta="center" w="100">
+                  {x.status}
+                </Td>
+              )}
               {x.conclusion && (
-                <Td ta="center">
+                <Td ta="center" w="100">
                   {x.conclusion === "success" ? (
                     <Anchor
                       href={`/github/artifacts/${x.id}`}

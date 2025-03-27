@@ -142,7 +142,7 @@ export default function Maker({ avatars }: { avatars: string[] }) {
           value={url}
           onChange={(e) => setUrl(e.target.value)}
         />
-        <Button onClick={startImport} disabled={!url} loading={loading}>
+        <Button onClick={startImport} disabled={!url || !url.startsWith('https')} loading={loading}>
           Import
         </Button>
       </Group>
