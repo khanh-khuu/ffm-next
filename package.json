@@ -31,6 +31,7 @@
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-image-crop": "11.0.7",
+    "react-slot-counter": "^3.3.0",
     "readable-stream": "4.7.0",
     "unzipper": "0.12.3",
     "yt-dlp-wrap": "2.3.12"
