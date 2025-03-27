@@ -7,7 +7,6 @@ import {
   Group,
   Image,
   SegmentedControl,
-  Select,
   Stack,
   Textarea,
   TextInput,
@@ -64,6 +63,14 @@ export default function Maker({ avatars }: { avatars: string[] }) {
     });
   }
 
+  function removeNonLatinKeepEmojiAndHashtags(text: string) {
+    let cleanedText = text.replace(/[^\u0000-\u007F\u00A0-\u00FF\u0100-\u017F\u0180-\u024F\u0250-\u02AF\u1E00-\u1EFF\u2C60-\u2C7F\uA720-\uA7FF\u{1F300}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}#]/gu, ''); 
+    cleanedText = cleanedText.replace(/#(?![a-zA-Z0-9])/g, '');
+    cleanedText = cleanedText.replace(/#+/g, '#'); 
+    cleanedText = cleanedText.replace(/\s+/g, ' '); 
+    return cleanedText; 
+  } 
+
   async function startImport() {
     generator.current?.revokeUrls();
     setLoading(true);
@@ -72,8 +79,8 @@ export default function Maker({ avatars }: { avatars: string[] }) {
     } = await axios.get("/file/import?url=" + url);
 
     setUrl("");
-    setDescription(description);
-    setCaption(removeEmojis(removeHashTag(description)).trim());
+    setDescription(removeNonLatinKeepEmojiAndHashtags(description));
+    setCaption(removeEmojis(removeHashTag(removeNonLatinKeepEmojiAndHashtags(description))).trim());
 
     try {
       // generator.current = new VideoThumbnailGenerator(file);
