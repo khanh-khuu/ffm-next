@@ -4,7 +4,7 @@ import { Crop } from "react-image-crop";
 import generateGithubName from "@/helper/generateGithubName";
 import removeEmojis from "@/helper/removeEmoji";
 import removeHashTag from "@/helper/removeHashTag";
-import { GITHUB_ENDPOINT } from "@/constant";
+import { BASE_URL, GITHUB_ENDPOINT } from "@/constant";
 
 export async function POST(request: Request) {
   const {
@@ -22,10 +22,10 @@ export async function POST(request: Request) {
   const caps = removeEmojis(removeHashTag(caption)).trim();
   const githubName = generateGithubName(description);
 
-  const url = new URL(request.url);
-  const baseUrl = `${url.protocol}//${url.host}`;
+  // const url = new URL(request.url);
+  // const baseUrl = `${url.protocol}//${url.host}`;
 
-  const vid_url = `${baseUrl}/file/input.mp4`;
+  const vid_url = `${BASE_URL}/file/input.mp4`;
   const width = 1080;
   const height = 1920;
 
