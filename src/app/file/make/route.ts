@@ -33,15 +33,14 @@ export async function POST(request: Request) {
     return removeEmojis(chunk.join(" ")).trim();
   });
 
-  
   let logoPosition = 0.62;
   let textPosition = 0.76;
 
-  if (avatar === 'transparent.png') {
+  if (avatar === "transparent.png") {
     logoPosition = 0.62;
     textPosition = 0.62;
   }
-  
+
   const captions = captionsArr.map((line, idx) => {
     return `[output]drawtext=fontfile=/lib/LeagueSpartan-Bold.ttf:text='${line}':x=(w-text_w)*0.5:y=(h-text_h)*${textPosition}+(${idx}*54):fontsize=48:fontcolor=white:shadowcolor=black:shadowx=2:shadowy=2[output]`;
   });
@@ -76,39 +75,40 @@ export async function POST(request: Request) {
     );
   }
 
-  try {
-    const { data: { workflows } } = await axios.get(`${GITHUB_ENDPOINT}/actions/workflows`);
-    if (workflows.length === 0) return Response.json({
-      success: false,
-      error: 'Workflow not found.',
-    });
-   } catch (err: any) {
+  const {
+    data: { workflows },
+  } = await axios.get(`${GITHUB_ENDPOINT}/actions/workflows`, {
+    headers: {
+      Accept: "application/vnd.github+json",
+      Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+    },
+  });
+
+  if (workflows.length === 0)
     return Response.json({
       success: false,
-      error: err.response.data
-    })
-   }
+      error: "Workflow not found.",
+    });
 
-  // const endpoint = `${GITHUB_ENDPOINT}/actions/workflows/${workflows[0].id}/dispatches`;
+  const endpoint = `${GITHUB_ENDPOINT}/actions/workflows/${workflows[0].id}/dispatches`;
   try {
-    // await axios.post(
-    //   endpoint,
-    //   {
-    //     ref: "main",
-    //     inputs: {
-    //       vid_url,
-    //       cmd,
-    //       // postback,
-    //       description: githubName,
-    //     },
-    //   },
-    //   {
-    //     headers: {
-    //       Accept: "application/vnd.github+json",
-    //       Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-    //     },
-    //   }
-    // );
+    await axios.post(
+      endpoint,
+      {
+        ref: "main",
+        inputs: {
+          vid_url,
+          cmd,
+          description: githubName,
+        },
+      },
+      {
+        headers: {
+          Accept: "application/vnd.github+json",
+          Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+        },
+      }
+    );
     return Response.json({
       success: true,
     });
