@@ -27,6 +27,7 @@ export default function Maker({ avatars }: { avatars: string[] }) {
   const [thumbnail, setThumbnail] = useState("");
   const generator = useRef<VideoThumbnailGenerator | null>(null);
   const [loading, setLoading] = useState(false);
+  const thumbnailRef = useRef(null);
 
   const [crop, setCrop] = useState<Crop>({
     unit: "%",
@@ -67,7 +68,7 @@ export default function Maker({ avatars }: { avatars: string[] }) {
     generator.current?.revokeUrls();
     setLoading(true);
     const {
-      data: { description, file },
+      data: { description, thumbnail },
     } = await axios.get("/file/import?url=" + url);
 
     setUrl("");
@@ -75,11 +76,14 @@ export default function Maker({ avatars }: { avatars: string[] }) {
     setCaption(removeEmojis(removeHashTag(description)).trim());
 
     try {
-      generator.current = new VideoThumbnailGenerator(file);
-      const thumbnail = await generator.current?.getThumbnail();
-      setThumbnail(thumbnail?.thumbnail || "");
+      // generator.current = new VideoThumbnailGenerator(file);
+      // const thumbnail = await generator.current?.getThumbnail();
+      // setThumbnail(thumbnail?.thumbnail || "");
+      setThumbnail(thumbnail);
+
       if (thumbnail) {
-        rezoneCrop(thumbnail.width, thumbnail.height);
+        const { naturalHeight, naturalWidth }  = thumbnailRef.current! as HTMLImageElement;
+        rezoneCrop(naturalWidth, naturalHeight);
       }
     } catch (err) {
       console.log(err);
@@ -129,7 +133,7 @@ export default function Maker({ avatars }: { avatars: string[] }) {
               crop={crop}
               onChange={(_crop, percentCrop) => setCrop(percentCrop)}
             >
-              <Image src={thumbnail} style={{ width: 300 }} />
+              <Image ref={thumbnailRef} src={thumbnail} style={{ width: 300 }} />
             </ReactCrop>
           </Flex>
 

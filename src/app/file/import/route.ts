@@ -4,6 +4,7 @@ import fs from "fs";
 import YTDlpWrap from "yt-dlp-wrap";
 import { getFbVideoInfo } from "fb-downloader-scrapper";
 import he from "he";
+import ffmpeg from "fluent-ffmpeg";
 
 async function downloadYoutube(
   url: string,
@@ -201,8 +202,20 @@ export async function GET(request: Request) {
 
   const description = await downloadVideo(downloadUrl, outputPath);
 
-return Response.json({
+  await new Promise((resolve) => {
+    ffmpeg(outputPath)
+      .on("end", resolve)
+      .screenshots({
+        count: 1,
+        filename: "thumbnail.png",
+        timestamps: ["30%"],
+        folder: "/tmp",
+      });
+  });
+
+  return Response.json({
     description,
-    file: `/file/input.mp4?t=${Date.now()}`,
+    // file: `/file/input.mp4?t=${Date.now()}`,
+    thumbnail: `/file/thumbnail.png?t=${Date.now()}`,
   });
 }
