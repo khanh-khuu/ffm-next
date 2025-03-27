@@ -76,32 +76,39 @@ export async function POST(request: Request) {
     );
   }
 
-  const { data: { workflows } } = await axios.get(`${GITHUB_ENDPOINT}/actions/workflows`);
-  if (workflows.length === 0) return Response.json({
-    success: false,
-    error: 'Workflow not found.',
-  });
-
-  const endpoint = `${GITHUB_ENDPOINT}/actions/workflows/${workflows[0].id}/dispatches`;
   try {
-    await axios.post(
-      endpoint,
-      {
-        ref: "main",
-        inputs: {
-          vid_url,
-          cmd,
-          // postback,
-          description: githubName,
-        },
-      },
-      {
-        headers: {
-          Accept: "application/vnd.github+json",
-          Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-        },
-      }
-    );
+    const { data: { workflows } } = await axios.get(`${GITHUB_ENDPOINT}/actions/workflows`);
+    if (workflows.length === 0) return Response.json({
+      success: false,
+      error: 'Workflow not found.',
+    });
+   } catch (err: any) {
+    return Response.json({
+      success: false,
+      error: err.response.data
+    })
+   }
+
+  // const endpoint = `${GITHUB_ENDPOINT}/actions/workflows/${workflows[0].id}/dispatches`;
+  try {
+    // await axios.post(
+    //   endpoint,
+    //   {
+    //     ref: "main",
+    //     inputs: {
+    //       vid_url,
+    //       cmd,
+    //       // postback,
+    //       description: githubName,
+    //     },
+    //   },
+    //   {
+    //     headers: {
+    //       Accept: "application/vnd.github+json",
+    //       Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+    //     },
+    //   }
+    // );
     return Response.json({
       success: true,
     });
