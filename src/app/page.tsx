@@ -10,9 +10,7 @@ export default function HomePage() {
     <Box style={{ maxWidth: 900 }} mx="auto" my="xl">
       <Card>
         <Maker avatars={avatars} />
-        <Box mt="xl">
-          <FileList />
-        </Box>
+        <FileList />
       </Card>
     </Box>
   );

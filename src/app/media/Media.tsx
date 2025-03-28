@@ -19,10 +19,10 @@ export default function Media() {
   async function onDrop(files: FileWithPath[]) {
     setLoading(true);
     for (const file of files) {
-        const formData = new FormData();
-        formData.set('file', file);
-        await axios.postForm(`/media/upload`, formData);
-        await listMedia();
+      const formData = new FormData();
+      formData.set("file", file);
+      await axios.postForm(`/media/upload`, formData);
+      await listMedia();
     }
     setLoading(false);
   }
@@ -43,7 +43,12 @@ export default function Media() {
 
   return (
     <Card>
-      <Dropzone disabled={loading} loading={loading} accept={[...IMAGE_MIME_TYPE, MIME_TYPES.mp4]} onDrop={onDrop}>
+      <Dropzone
+        disabled={loading}
+        loading={loading}
+        accept={[...IMAGE_MIME_TYPE, MIME_TYPES.mp4]}
+        onDrop={onDrop}
+      >
         <Group
           justify="center"
           gap="xl"
@@ -79,19 +84,21 @@ export default function Media() {
         </Group>
       </Dropzone>
 
-      <SimpleGrid
-        mt="66px"
-        cols={{
-          lg: 4,
-          md: 3,
-          sm: 3,
-          xs: 2,
-        }}
-      >
-        {media.map((x) => (
-          <MediaCard key={x} file={x} onDelete={deleteMedia} />
-        ))}
-      </SimpleGrid>
+      {media.length > 0 && (
+        <SimpleGrid
+          mt="66px"
+          cols={{
+            lg: 4,
+            md: 3,
+            sm: 3,
+            xs: 2,
+          }}
+        >
+          {media.map((x) => (
+            <MediaCard key={x} file={x} onDelete={deleteMedia} />
+          ))}
+        </SimpleGrid>
+      )}
     </Card>
   );
 }

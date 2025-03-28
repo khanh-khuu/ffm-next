@@ -42,10 +42,13 @@ export default function FileList() {
       clearInterval(timer);
     };
   }, []);
+
+  if (runs.length === 0) return null;
+
   return (
     <Box>
       {/* <audio id="notificationSound" src="/done.mp3"></audio> */}
-      <Table layout="fixed">
+      <Table layout="fixed" mt="50px">
         {/* <Thead>
           <Tr>
             <Th>Name</Th>
@@ -55,18 +58,21 @@ export default function FileList() {
           </Tr>
         </Thead> */}
         <Tbody>
-          {runs.map((x) => (
+          {runs.map((x, idx) => (
             <Tr key={x.id}>
-              <Td>
+              <Td p="0">
+                
                 <CopyButton value={x.name}>
                   {({ copied, copy }) => (
                     <Box
                       onClick={copy}
                       style={{
+                        width: '100%',
+                        height: '100%',
                         background: copied ? "green" : "none",
                       }}
                     >
-                      {x.name}
+                      {idx + 1}. {x.name}
                     </Box>
                   )}
                 </CopyButton>

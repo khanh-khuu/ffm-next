@@ -1,0 +1,1 @@
+type User = Pick<CounterViewUser, 'userId' | 'username' | 'avatar'>;
