@@ -3,7 +3,7 @@ import axios from "axios";
 export async function GET(request: Request, { params }: any) {
   const { videoId } = await params;
 
-  const { data } = await axios.get<VideoCount>(
+  const { data } = await axios.get(
     "https://tiktok.livecounts.io/video/stats/" + videoId,
     {
       headers: {
