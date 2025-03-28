@@ -1,1 +1,1 @@
-type User = Pick<CounterViewUser, 'userId' | 'username' | 'avatar'>;
+type User = Pick<CounterViewUser, 'userId' | 'username' | 'avatar' | 'id'>;

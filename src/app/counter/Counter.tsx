@@ -33,6 +33,7 @@ export default function Counter() {
             userId: data.userId,
             username: data.username,
             avatar: data.avatar,
+            id: data.id,
         }));
     }
 

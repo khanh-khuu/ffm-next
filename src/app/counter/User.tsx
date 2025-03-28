@@ -10,13 +10,13 @@ export default function UserCard({
   onClick: (username: string) => void;
 }) {
   return (
-    <Card onClick={() => onClick(data.username)} maw={90} bg="dark" style={{ cursor: 'pointer'}}>
+    <Card onClick={() => onClick(data.id)} maw={90} bg="dark" style={{ cursor: 'pointer'}}>
       <AspectRatio ratio={1}>
         <Image src={data.avatar} radius={500} />
       </AspectRatio>
       <Group justify="center" align="center">
         <Group c="dimmed" fz=".8em">
-          {data.username}
+          {data.id}
         </Group>
       </Group>
     </Card>
