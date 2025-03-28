@@ -52,6 +52,8 @@ export default function LivePost({
 
   const timer = useRef<number>(null);
 
+  const timer1 = useRef<number>(null);
+
   async function getLatestVideo() {
     setLoading(true);
     const res = await axios.get<CounterViewResponse>(
@@ -88,8 +90,12 @@ export default function LivePost({
 
   useEffect(() => {
     getLatestVideo();
+    timer1.current = window.setInterval(() => {
+      getLatestVideo();
+    }, 30000);
     return () => {
       if (timer.current) clearInterval(timer.current);
+      if (timer1.current) clearInterval(timer1.current);
     };
   }, []);
 
