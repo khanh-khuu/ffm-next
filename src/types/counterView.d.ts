@@ -1,6 +1,4 @@
 interface CounterViewResponse {
-    cache: boolean;
-    success: boolean;
     userData: UserDatum[];
     author: Author;
   }
@@ -19,22 +17,7 @@ interface CounterViewResponse {
     id: string;
     publishedAt: number;
     statistics: Statistics;
-    engagement: Engagement;
-    estimatedEarnings: EstimatedEarnings;
   }
-  
-  interface EstimatedEarnings {
-    min: string;
-    max: string;
-  }
-  
-  interface Engagement {
-    all: string;
-    likes: string;
-    comments: string;
-    shares: string;
-  }
-  
   interface Statistics {
     viewCount: number;
     likeCount: number;

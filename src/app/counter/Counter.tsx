@@ -1,23 +1,13 @@
 "use client";
 
-import {
-  Button,
-  Card,
-  Flex,
-  Group,
-  SimpleGrid,
-  TextInput,
-} from "@mantine/core";
+import { Button, Card, Group, SimpleGrid, TextInput } from "@mantine/core";
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
-import Post from "./Post";
+import { useState } from "react";
 import { useLocalStorage } from "@mantine/hooks";
-import UserCard from "./User";
+import LivePost from "./LivePost";
 
 export default function Counter() {
   const [userName, setUserName] = useState("");
-  const [views, setViews] = useState<UserDatum[]>([]);
-  const timer = useRef<number | null>(null);
   const [loading, setLoading] = useState(false);
 
   const [users, setUsers] = useLocalStorage<User[]>({
@@ -25,24 +15,11 @@ export default function Counter() {
     defaultValue: [],
   });
 
-  async function getViews(userId: string) {
-    const {
-      data: { userData },
-    } = await axios.get<CounterViewResponse>(`/counter/view/${userId}`, {
-      headers: {
-        "Cache-Control": "no-cache",
-        Pragma: "no-cache",
-        Expires: "0",
-      },
-    });
-    setViews(userData.slice(0, 9));
-  }
-  async function startCount(_userName?: string) {
+  async function fetchUser() {
     setLoading(true);
-    if (timer.current) clearInterval(timer.current);
 
     const { data } = await axios.get<CounterViewUser>(
-      `/counter/user/${_userName || userName}`,
+      `/counter/user/${userName}`,
       {
         headers: {
           "Cache-Control": "no-cache",
@@ -53,65 +30,38 @@ export default function Counter() {
     );
 
     if (users.every((x) => x.userId !== data.userId)) {
-      setUsers((val) =>
-        val.slice(-6).concat({
-          userId: data.userId,
-          username: data.username,
-          avatar: data.avatar,
-          id: data.id,
-        })
-      );
+      setUsers([...users, data]);
     }
-
-    await getViews(data.userId);
+    setUserName("");
     setLoading(false);
-    timer.current = window.setInterval(async () => {
-      getViews(data.userId);
-    }, 5000);
   }
 
-  useEffect(() => {
-    return () => {
-      if (timer.current) clearInterval(timer.current);
-    };
-  }, []);
+  function deleteCard(user: User) {
+    setUsers(users.filter((x) => x.id !== user.id));
+  }
 
   return (
     <Card>
       <Group>
         <TextInput
+          disabled={loading}
           flex={1}
           value={userName}
           onChange={(e) => setUserName(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              startCount();
+              fetchUser();
             }
           }}
         />
-        <Button onClick={() => startCount()} loading={loading} disabled={loading}>
+        <Button onClick={fetchUser} loading={loading} disabled={loading}>
           Count
         </Button>
       </Group>
 
       {users.length > 0 && (
-        <Group justify="center" align="center" gap="xs" mt="md">
-          {users.map((x) => (
-            <UserCard
-              key={x.userId}
-              data={x}
-              onClick={(userId) => {
-                setUserName(userId);
-                startCount(userId);
-              }}
-            />
-          ))}
-        </Group>
-      )}
-
-      {views.length > 0 && (
         <SimpleGrid
-          mt="66px"
+          mt="30px"
           cols={{
             lg: 4,
             md: 3,
@@ -119,8 +69,8 @@ export default function Counter() {
             xs: 2,
           }}
         >
-          {views.map((x) => (
-            <Post data={x} key={x.id} />
+          {users.map((x) => (
+            <LivePost data={x} key={x.id} onDelete={deleteCard} />
           ))}
         </SimpleGrid>
       )}
