@@ -28,10 +28,7 @@ export default function Counter() {
         },
       }
     );
-
-    if (users.every((x) => x.userId !== data.userId)) {
-      setUsers([...users, data]);
-    }
+    setUsers([data, ...users.filter(x => x.userId !== data.userId)]);
     setUserName("");
     setLoading(false);
   }
@@ -63,9 +60,7 @@ export default function Counter() {
         <SimpleGrid
           mt="30px"
           cols={{
-            lg: 4,
             md: 3,
-            sm: 3,
             xs: 2,
           }}
         >

@@ -88,10 +88,10 @@ export default function FileList() {
                   {x.conclusion === "success" ? (
                     <Anchor
                       href={`/github/artifacts/${x.id}`}
-                      target="_blank"
+                      download
                       underline="never"
                     >
-                      <ActionIcon variant="light" color="green">
+                      <ActionIcon variant="transparent" color="green">
                         <IconDownload />
                       </ActionIcon>
                     </Anchor>

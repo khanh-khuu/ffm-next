@@ -70,7 +70,7 @@ export default function LivePost({
     timer.current = window.setInterval(() => {
       if (!post?.id) return;
       getStat();
-    }, 5000);
+    }, 2000);
 
     return () => {
       if (timer.current) clearInterval(timer.current);
