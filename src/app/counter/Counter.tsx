@@ -60,8 +60,9 @@ export default function Counter() {
         <SimpleGrid
           mt="30px"
           cols={{
-            md: 3,
-            xs: 2,
+            md: 4,
+            sm: 3,
+            base: 2,
           }}
         >
           {users.map((x) => (

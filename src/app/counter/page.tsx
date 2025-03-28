@@ -3,7 +3,7 @@ import Counter from "./Counter";
 
 export default function CounterPage() {
   return (
-    <Box maw={900} mx="auto" my="xl">
+    <Box maw={1200} mx="auto" my="xl">
       <Counter />
     </Box>
   );

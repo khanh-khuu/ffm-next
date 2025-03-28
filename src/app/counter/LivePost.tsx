@@ -12,8 +12,17 @@ import {
   ActionIcon,
   CloseButton,
   Loader,
+  Box,
+  Anchor,
 } from "@mantine/core";
-import { IconHeart, IconMessage, IconShare } from "@tabler/icons-react";
+import {
+  IconHeart,
+  IconHeartBolt,
+  IconHeartFilled,
+  IconMessage,
+  IconMessageFilled,
+  IconShare,
+} from "@tabler/icons-react";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import SlotCounter from "react-slot-counter";
@@ -85,10 +94,19 @@ export default function LivePost({
   }, []);
 
   return (
-    <Card bg="black">
+    <Card bg="rgb(30, 29, 29)" py="10px">
       <Stack gap="0">
         <Text>{data.username}</Text>
-        <Text fz="xs">{data.id}</Text>
+        <Anchor
+          underline={"never"}
+          target="_blank"
+          fz="xs"
+          href={`https://www.tiktok.com/@${data.id}`}
+        >
+          <Text style={{ color: "#484848" }} fz="xs">
+            {data.id}
+          </Text>
+        </Anchor>
       </Stack>
 
       <CloseButton
@@ -98,46 +116,58 @@ export default function LivePost({
         onClick={() => onDelete(data)}
       />
 
-      <Card.Section>
-        <AspectRatio ratio={1.5} pos="relative">
-          <Overlay color="#000" backgroundOpacity={0.9} zIndex={1}>
+      <Card.Section bg="grey">
+        <Box h="65px" pos="relative">
+          <Overlay color="#000" backgroundOpacity={0.76} zIndex={1}>
             <Flex
-              fz="3em"
-              pos="absolute"
               w="100%"
-              h="100%"
+              h="80%"
               justify={"center"}
               align={"center"}
             >
               {loading ? (
                 <Loader />
               ) : (
-                <SlotCounter
-                  sequentialAnimationMode
-                  useMonospaceWidth
-                  value={new Intl.NumberFormat().format(
-                    post.statistics.viewCount
-                  )}
-                />
+                <Anchor
+                  fz="2.3em"
+                  c="#e3e3e3"
+                  fw="bolder"
+                  underline={"never"}
+                  target="_blank"
+                  href={`https://www.tiktok.com/@${data.id}/video/${post.id}`}
+                >
+                  <SlotCounter
+                    sequentialAnimationMode
+                    useMonospaceWidth
+                    value={new Intl.NumberFormat().format(
+                      post.statistics.viewCount
+                    )}
+                  />
+                </Anchor>
               )}
             </Flex>
           </Overlay>
-          <Image src={post.dynamicCover} />
-        </AspectRatio>
+        </Box>
       </Card.Section>
-      <Group justify="space-between">
-        <Stack c="dimmed" gap="0" justify="center" align="center" fz="h4">
-          {Number(post.statistics.likeCount.toFixed(1)).toFixed()}{" "}
-          <IconHeart size="22px" />
-        </Stack>
-        <Stack c="dimmed" gap="0" justify="center" align="center" fz="h4">
-          {Number(post.statistics.commentCount.toFixed(1)).toFixed()}{" "}
-          <IconMessage size="22px" />
-        </Stack>
-        <Stack c="dimmed" gap="0" justify="center" align="center" fz="h4">
-          {Number(post.statistics.shareCount.toFixed(1)).toFixed()}{" "}
-          <IconShare size="22px" />
-        </Stack>
+      <Group justify="space-between" style={{ color: "#484848" }}>
+        <Group gap="4px" justify="center" align="center">
+          <IconHeartFilled size="13px" />
+          <Text fz="13px" pb="2px">
+            {Number(post.statistics.likeCount.toFixed(1)).toFixed()}
+          </Text>
+        </Group>
+        <Group gap="4px" justify="center" align="center" fz="h4">
+          <IconMessageFilled size="13px" />
+          <Text fz="13px" pb="2px">
+            {Number(post.statistics.commentCount.toFixed(1)).toFixed()}
+          </Text>
+        </Group>
+        <Group gap="4px" justify="center" align="center" fz="h4">
+          <IconShare size="13px" />
+          <Text fz="13px" pb="2px">
+            {Number(post.statistics.shareCount.toFixed(1)).toFixed()}
+          </Text>
+        </Group>
       </Group>
     </Card>
   );
