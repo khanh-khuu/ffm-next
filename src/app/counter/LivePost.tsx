@@ -100,7 +100,7 @@ export default function LivePost({
 
       <Card.Section>
         <AspectRatio ratio={1.5} pos="relative">
-          <Overlay color="#000" backgroundOpacity={0.9}>
+          <Overlay color="#000" backgroundOpacity={0.9} zIndex={1}>
             <Flex
               fz="3em"
               pos="absolute"
