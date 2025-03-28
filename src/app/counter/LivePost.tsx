@@ -142,6 +142,7 @@ export default function LivePost({
                     value={new Intl.NumberFormat().format(
                       post.statistics.viewCount
                     )}
+                    duration={1}
                   />
                 </Anchor>
               )}
