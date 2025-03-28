@@ -37,12 +37,12 @@ export default function Counter() {
     });
     setViews(userData.slice(0, 9));
   }
-  async function startCount() {
+  async function startCount(_userName?: string) {
     setLoading(true);
     if (timer.current) clearInterval(timer.current);
 
     const { data } = await axios.get<CounterViewUser>(
-      `/counter/user/${userName}`,
+      `/counter/user/${_userName || userName}`,
       {
         headers: {
           "Cache-Control": "no-cache",
@@ -89,7 +89,7 @@ export default function Counter() {
             }
           }}
         />
-        <Button onClick={startCount} loading={loading} disabled={loading}>
+        <Button onClick={() => startCount()} loading={loading} disabled={loading}>
           Count
         </Button>
       </Group>
@@ -100,9 +100,9 @@ export default function Counter() {
             <UserCard
               key={x.userId}
               data={x}
-              onClick={(username) => {
-                setUserName(username);
-                startCount();
+              onClick={(userId) => {
+                setUserName(userId);
+                startCount(userId);
               }}
             />
           ))}
