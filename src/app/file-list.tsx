@@ -62,7 +62,7 @@ export default function FileList() {
             <Tr key={x.id}>
               <Td p="0">
                 
-                <CopyButton value={x.name}>
+                <CopyButton value={x.name + ' '}>
                   {({ copied, copy }) => (
                     <Box
                       onClick={copy}
