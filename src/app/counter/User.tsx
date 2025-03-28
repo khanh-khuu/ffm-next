@@ -13,6 +13,7 @@ export default function UserCard({
     <Card
       onClick={() => onClick(data.id)}
       w={110}
+      h={110}
       bg="dark"
       style={{ cursor: "pointer" }}
     >

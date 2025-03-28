@@ -95,7 +95,7 @@ export default function Counter() {
       </Group>
 
       {users.length > 0 && (
-        <Group justify="stretch" align="stretch" gap="xs" mt="md" h={100}>
+        <Group justify="center" align="center" gap="xs" mt="md">
           {users.map((x) => (
             <UserCard
               key={x.userId}
