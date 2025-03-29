@@ -150,6 +150,7 @@ export default function Maker({ avatars }: { avatars: string[] }) {
 
   async function make() {
     setLoading(true);
+    try {
     await axios.post(`/file/make`, {
       crop,
       description,
@@ -157,7 +158,9 @@ export default function Maker({ avatars }: { avatars: string[] }) {
       avatar,
       speed: (originalDuration / duration).toFixed(1),
     });
-    setLoading(false);
+    } finally {
+      setLoading(false);
+    }
     setDuration(0);
     setOriginalDuration(0);
     setCrop({
