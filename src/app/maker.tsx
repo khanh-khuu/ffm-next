@@ -156,7 +156,7 @@ export default function Maker({ avatars }: { avatars: string[] }) {
       description,
       caption,
       avatar,
-      speed: (originalDuration / duration).toFixed(1),
+      speed: (originalDuration / duration).toFixed(3),
     });
     } finally {
       setLoading(false);
