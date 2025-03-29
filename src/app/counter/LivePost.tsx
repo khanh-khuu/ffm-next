@@ -53,16 +53,20 @@ export default function LivePost({
   const timer = useRef<number>(null);
 
   async function getLatestVideo() {
-    setLoading(true);
-    const res = await axios.get<CounterViewResponse>(
-      "/counter/views/" + data.userId
-    );
-    setLoading(false);
-    
-    setPost(res.data.userData[0]);
-    if (res.data.userData[0]) {
-      const latestPost = res.data.userData[0];
-      setPost(latestPost);
+    try {
+      setLoading(true);
+      const res = await axios.get<CounterViewResponse>(
+        "/counter/views/" + data.userId
+      );
+      setLoading(false);
+
+      setPost(res.data.userData[0]);
+      if (res.data.userData[0]) {
+        const latestPost = res.data.userData[0];
+        setPost(latestPost);
+      }
+    } catch (err) {
+      getLatestVideo();
     }
   }
 
