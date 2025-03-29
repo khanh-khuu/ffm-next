@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  ActionIcon,
   Box,
   Button,
   FileButton,
@@ -232,19 +233,10 @@ export default function Maker({ avatars }: { avatars: string[] }) {
             onChange={(val) => setDuration(Number(val))}
           />
 
-          <SegmentedControl
-            data={avatars.map((x) => ({
-              value: x,
-              label: (
-                <Flex justify={"center"} align={"center"}>
-                  <Image w={60} src={"/avatars/" + x} />
-                </Flex>
-              ),
-            }))}
-            value={avatar}
-            onChange={(val) => setAvatar(val)}
-          />
-
+          <Group justify={"flex-start"} align={"center"} gap={'1px'}>
+            {avatars.map((x) => (<ActionIcon color="black" onClick={() => setAvatar(x)} style={{ opacity: avatar === x ? 1 : 1 }} variant={avatar === x ? 'filled' : 'light'} p="4px" w={60} h={60} key={x}><Image src={"/avatars/" + x} /></ActionIcon>))}
+          </Group>
+          
           <Button onClick={make} loading={loading} disabled={loading}>
             Make
           </Button>
