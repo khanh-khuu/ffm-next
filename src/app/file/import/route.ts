@@ -25,7 +25,7 @@ async function downloadYoutube2(
 ): Promise<string> {
   const endpoint = "https://www.clipto.com/api/youtube";
 
-  const { data } = await axios.post(endpoint, {
+  const { data } = await axios.post<CliptoResponse>(endpoint, {
     url,
   });
 
