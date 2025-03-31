@@ -18,9 +18,9 @@ export default function AppShellWrap({ children }: PropsWithChildren) {
     >
       <AppShell.Header>
         <Group justify="center" align="center" h="60" gap="xs">
-          <Link href={"/"}><Button variant={pathname === '/' ? 'gradient' : 'transparent'} leftSection={<IconWand />}>Studio</Button></Link>
-          <Link href={"/media"}><Button variant={pathname === '/media' ? 'gradient' : 'transparent'} leftSection={<IconBrandTelegram />}>Media</Button></Link>
-          <Link href={"/counter"}><Button variant={pathname === '/counter' ? 'gradient' : 'transparent'} leftSection={<IconEye />}>Counter</Button></Link>
+          <Link href={"/"}><Button c={pathname === '/' ? '' : 'dimmed'} variant={pathname === '/' ? 'gradient' : 'transparent'} leftSection={<IconWand />}>Studio</Button></Link>
+          <Link href={"/media"}><Button c={pathname === '/media' ? '' : 'dimmed'} variant={pathname === '/media' ? 'gradient' : 'transparent'} leftSection={<IconBrandTelegram />}>Media</Button></Link>
+          <Link href={"/counter"}><Button c={pathname === '/counter' ? '' : 'dimmed'} variant={pathname === '/counter' ? 'gradient' : 'transparent'} leftSection={<IconEye />}>Counter</Button></Link>
         </Group>
       </AppShell.Header>
       <AppShell.Main pt="50px">{children}</AppShell.Main>

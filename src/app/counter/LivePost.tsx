@@ -48,17 +48,14 @@ export default function LivePost({
     title: "",
   });
 
-  const [loading, setLoading] = useState(false);
-
   const timer = useRef<number>(null);
+  const timer1 = useRef<number>(null);
 
   async function getLatestVideo() {
     try {
-      setLoading(true);
       const res = await axios.get<CounterViewResponse>(
         "/counter/views/" + data.userId
       );
-      setLoading(false);
 
       setPost(res.data.userData[0]);
       if (res.data.userData[0]) {
@@ -80,10 +77,16 @@ export default function LivePost({
   }
 
   useEffect(() => {
-    timer.current = window.setInterval(() => {
-      if (!post?.id) return;
-      getStat();
-    }, 2000);
+    new Promise((resolve) => {
+      setTimeout(resolve, Math.floor(Math.random() * 5000) + 1);
+    }).then(() => {
+      if (timer.current) clearInterval(timer.current);
+
+      timer.current = window.setInterval(() => {
+        if (!post?.id) return;
+        getStat();
+      }, 5000);
+    });
 
     return () => {
       if (timer.current) clearInterval(timer.current);
@@ -92,8 +95,14 @@ export default function LivePost({
 
   useEffect(() => {
     getLatestVideo();
+
+    timer1.current = window.setInterval(() => {
+      getLatestVideo();
+    }, 60_000);
+
     return () => {
       if (timer.current) clearInterval(timer.current);
+      if (timer1.current) clearInterval(timer1.current);
     };
   }, []);
 
@@ -101,6 +110,7 @@ export default function LivePost({
     <Card bg="rgb(30, 29, 29)" py="10px">
       <Stack gap="0">
         <Anchor
+          c="gray"
           underline={"never"}
           target="_blank"
           href={`https://www.tiktok.com/@${data.id}`}
@@ -123,7 +133,7 @@ export default function LivePost({
         <Box h="65px" pos="relative">
           <Overlay color="#000" backgroundOpacity={0.76} zIndex={1}>
             <Flex w="100%" h="80%" justify={"center"} align={"center"}>
-              {loading ? (
+              {!post.id ? (
                 <Loader />
               ) : (
                 <Anchor

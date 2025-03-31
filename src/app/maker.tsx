@@ -259,6 +259,7 @@ export default function Maker({ avatars }: { avatars: string[] }) {
                   <Image
                     onClick={() => avatarCombobox.toggleDropdown()}
                     src={"/avatars/" + avatar}
+                    alt={avatar}
                   />
                 </Card>
               </Combobox.Target>
@@ -267,7 +268,7 @@ export default function Maker({ avatars }: { avatars: string[] }) {
                 <Combobox.Options>
                   {avatars.map((x) => (
                     <Combobox.Option value={x} key={x}>
-                      <Image src={"/avatars/" + x} />
+                      <Image src={"/avatars/" + x} alt={x} />
                     </Combobox.Option>
                   ))}
                 </Combobox.Options>

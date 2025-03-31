@@ -74,8 +74,8 @@ export default function Counter() {
             }
           }}
         />
-        <Button onClick={fetchUser} loading={loading} disabled={loading}>
-          Count
+        <Button onClick={fetchUser} loading={loading} disabled={loading} variant="light">
+          Go
         </Button>
       </Group>
 
