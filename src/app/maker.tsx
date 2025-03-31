@@ -32,7 +32,7 @@ export default function Maker({ avatars }: { avatars: string[] }) {
   const [originalDuration, setOriginalDuration] = useState(0);
   const [duration, setDuration] = useState(0);
   const [avatar, setAvatar] = useState("transparent.png");
-  const [thumbnail, setThumbnail] = useState("/file/thumbnail.png");
+  const [thumbnail, setThumbnail] = useState("");
   // const generator = useRef<VideoThumbnailGenerator | null>(null);
   const [loading, setLoading] = useState(false);
   const thumbnailRef = useRef(null);
