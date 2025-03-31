@@ -100,17 +100,16 @@ export default function LivePost({
   return (
     <Card bg="rgb(30, 29, 29)" py="10px">
       <Stack gap="0">
-        <Text>{data.username}</Text>
         <Anchor
           underline={"never"}
           target="_blank"
-          fz="xs"
           href={`https://www.tiktok.com/@${data.id}`}
         >
-          <Text style={{ color: "#484848" }} fz="xs">
-            {data.id}
-          </Text>
+          <Text>{data.username}</Text>
         </Anchor>
+        <Text style={{ color: "#484848" }} fz="xs">
+          {data.id}
+        </Text>
       </Stack>
 
       <CloseButton
@@ -123,12 +122,7 @@ export default function LivePost({
       <Card.Section bg="grey">
         <Box h="65px" pos="relative">
           <Overlay color="#000" backgroundOpacity={0.76} zIndex={1}>
-            <Flex
-              w="100%"
-              h="80%"
-              justify={"center"}
-              align={"center"}
-            >
+            <Flex w="100%" h="80%" justify={"center"} align={"center"}>
               {loading ? (
                 <Loader />
               ) : (
