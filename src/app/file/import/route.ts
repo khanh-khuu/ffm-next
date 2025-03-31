@@ -23,11 +23,9 @@ async function downloadYoutube2(
   url: string,
   outputPath: string
 ): Promise<string> {
-  const endpoint = "https://www.clipto.com/api/youtube";
-
-  const { data } = await axios.post<CliptoResponse>(endpoint, {
-    url,
-  });
+  const endpoint = "https://ffm-next.khanhkhuu.workers.dev/?url=" + url;
+  try {
+  const { data } = await axios.get<CliptoResponse>(endpoint);
 
   const desc = data.title;
   const downloadUrl = data.medias.find(x => x.extension === 'mp4' && x.is_audio)?.url;
@@ -50,6 +48,9 @@ async function downloadYoutube2(
       resolve(desc);
     });
   });
+  } catch (err: any) {
+    throw err;
+  }
 }
 
 async function downloadTiktok(url: string, outputPath: string): Promise<any> {

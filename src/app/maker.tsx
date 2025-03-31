@@ -144,8 +144,9 @@ export default function Maker({ avatars }: { avatars: string[] }) {
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   async function make() {
