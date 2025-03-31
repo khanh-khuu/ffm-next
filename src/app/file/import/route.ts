@@ -200,7 +200,7 @@ function downloadVideo(url: string, outputPath: string) {
   const facebookRegex = /^(https?:\/\/)?(www\.)?(facebook\.com|fb\.com)\/.+/i;
   const youtubeRegex = /^(https?:\/\/)?(www\.)?(m\.)?(youtube\.com|youtu\.be)\/.+/i;
   const tiktokRegex = /^(https?:\/\/)?(www\.)?(vt\.)?tiktok\.com\/.+/i;
-  const kuaishouRegex = /^(https?:\/\/)?(www\.)?kuaishou\.com\/.+/i;
+  const kuaishouRegex = /^(https?:\/\/)?(www\.)?(v\.)?kuaishou\.com\/.+/i;
 
   if (facebookRegex.test(url)) {
     return downloadFacebook(url, outputPath);
