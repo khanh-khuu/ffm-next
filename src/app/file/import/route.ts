@@ -37,9 +37,11 @@ async function downloadYoutube2(
 
   fileResponse.data.pipe(writer);
 
+  const desc = fileResponse.headers['x-description'];
+
   return new Promise((resolve) => {
     writer.on("finish", () => {
-      resolve(fileResponse.headers['X-Description']);
+      resolve(desc);
     });
   });
 }
