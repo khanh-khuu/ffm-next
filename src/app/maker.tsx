@@ -4,6 +4,8 @@ import {
   ActionIcon,
   Box,
   Button,
+  Card,
+  Combobox,
   FileButton,
   Flex,
   Group,
@@ -13,6 +15,7 @@ import {
   Stack,
   Textarea,
   TextInput,
+  useCombobox,
 } from "@mantine/core";
 import axios from "axios";
 import { useRef, useState } from "react";
@@ -29,10 +32,13 @@ export default function Maker({ avatars }: { avatars: string[] }) {
   const [originalDuration, setOriginalDuration] = useState(0);
   const [duration, setDuration] = useState(0);
   const [avatar, setAvatar] = useState("transparent.png");
-  const [thumbnail, setThumbnail] = useState("");
+  const [thumbnail, setThumbnail] = useState("/file/thumbnail.png");
   // const generator = useRef<VideoThumbnailGenerator | null>(null);
   const [loading, setLoading] = useState(false);
   const thumbnailRef = useRef(null);
+  const avatarCombobox = useCombobox({
+    onDropdownClose: () => avatarCombobox.resetSelectedOption(),
+  });
 
   const [crop, setCrop] = useState<Crop>({
     unit: "%",
@@ -152,13 +158,13 @@ export default function Maker({ avatars }: { avatars: string[] }) {
   async function make() {
     setLoading(true);
     try {
-    await axios.post(`/file/make`, {
-      crop,
-      description,
-      caption,
-      avatar,
-      speed: (originalDuration / duration).toFixed(3),
-    });
+      await axios.post(`/file/make`, {
+        crop,
+        description,
+        caption,
+        avatar,
+        speed: (originalDuration / duration).toFixed(3),
+      });
     } finally {
       setLoading(false);
     }
@@ -194,7 +200,11 @@ export default function Maker({ avatars }: { avatars: string[] }) {
         </Button>
         <FileButton onChange={(file) => uploadFile(file)} accept="video/mp4">
           {(props) => (
-            <Button {...props} variant="subtle" loading={loading} disabled={loading}>
+            <Button
+              {...props}
+              variant="subtle"
+              disabled={loading}
+            >
               <IconUpload />
             </Button>
           )}
@@ -223,12 +233,47 @@ export default function Maker({ avatars }: { avatars: string[] }) {
             onChange={(e) => setDescription(e.target.value)}
           />
 
-          <Textarea
-            label="Caption on video"
-            placeholder="Caption"
-            value={caption}
-            onChange={(e) => setCaption(e.target.value)}
-          />
+          <Group justify="center" align="flex-end">
+            <Textarea
+              flex={1}
+              label="Caption on video"
+              placeholder="Caption"
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
+            />
+            <Combobox
+              store={avatarCombobox}
+              withArrow
+              onOptionSubmit={(val) => {
+                setAvatar(val);
+                avatarCombobox.closeDropdown();
+              }}
+            >
+              <Combobox.Target>
+                <Card
+                  style={{ cursor: "pointer" }}
+                  w="60"
+                  bg="gray"
+                  radius={100}
+                >
+                  <Image
+                    onClick={() => avatarCombobox.toggleDropdown()}
+                    src={"/avatars/" + avatar}
+                  />
+                </Card>
+              </Combobox.Target>
+
+              <Combobox.Dropdown>
+                <Combobox.Options>
+                  {avatars.map((x) => (
+                    <Combobox.Option value={x} key={x}>
+                      <Image src={"/avatars/" + x} />
+                    </Combobox.Option>
+                  ))}
+                </Combobox.Options>
+              </Combobox.Dropdown>
+            </Combobox>
+          </Group>
 
           <NumberInput
             label={`New duration (original: ${originalDuration}s)`}
@@ -237,10 +282,6 @@ export default function Maker({ avatars }: { avatars: string[] }) {
             onChange={(val) => setDuration(Number(val))}
           />
 
-          <Group justify={"flex-start"} align={"center"} gap={'1px'}>
-            {avatars.map((x) => (<ActionIcon color="black" onClick={() => setAvatar(x)} style={{ opacity: avatar === x ? 1 : 1 }} variant={avatar === x ? 'filled' : 'light'} p="4px" w={60} h={60} key={x}><Image src={"/avatars/" + x} /></ActionIcon>))}
-          </Group>
-          
           <Button onClick={make} loading={loading} disabled={loading}>
             Make
           </Button>
