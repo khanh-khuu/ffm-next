@@ -19,6 +19,39 @@ async function downloadYoutube(
   });
 }
 
+async function downloadYoutube2(
+  url: string,
+  outputPath: string
+): Promise<string> {
+  const endpoint = "https://www.clipto.com/api/youtube";
+
+  const { data } = await axios.post(endpoint, {
+    url,
+  });
+
+  const desc = data.title;
+  const downloadUrl = data.medias.find(x => x.extension === 'mp4' && x.is_audio)?.url;
+
+  const fileResponse = await axios({
+    method: "GET",
+    url: downloadUrl,
+    responseType: "stream",
+    headers: {
+      "Content-Type": "video/mp4",
+    },
+  });
+
+  const writer = fs.createWriteStream(outputPath);
+
+  fileResponse.data.pipe(writer);
+
+  return new Promise((resolve) => {
+    writer.on("finish", () => {
+      resolve(desc);
+    });
+  });
+}
+
 async function downloadTiktok(url: string, outputPath: string): Promise<any> {
   function extractUrl(input: string) {
     const regex = /playAddr":"([^"]+)/;
@@ -171,14 +204,14 @@ async function downloadFacebook(
 
 function downloadVideo(url: string, outputPath: string) {
   const facebookRegex = /^(https?:\/\/)?(www\.)?(facebook\.com|fb\.com)\/.+/i;
-  const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+/i;
+  const youtubeRegex = /^(https?:\/\/)?(www\.)?(m\.)?(youtube\.com|youtu\.be)\/.+/i;
   const tiktokRegex = /^(https?:\/\/)?(www\.)?(vt\.)?tiktok\.com\/.+/i;
   const kuaishouRegex = /^(https?:\/\/)?(www\.)?kuaishou\.com\/.+/i;
 
   if (facebookRegex.test(url)) {
     return downloadFacebook(url, outputPath);
   } else if (youtubeRegex.test(url)) {
-    return downloadYoutube(url, outputPath);
+    return downloadYoutube2(url, outputPath);
   } else if (tiktokRegex.test(url)) {
     return downloadTiktok(url, outputPath);
   } else if (kuaishouRegex.test(url)) {
@@ -202,7 +235,11 @@ export async function GET(request: Request) {
 
   const description = await downloadVideo(downloadUrl, outputPath);
 
-  const { duration, height, width } = await new Promise<{ duration: number, height: number, width: number }>((resolve, reject) => {
+  const { duration, height, width } = await new Promise<{
+    duration: number;
+    height: number;
+    width: number;
+  }>((resolve, reject) => {
     ffmpeg.ffprobe(outputPath, function (err, metadata) {
       if (err) reject(err);
       else {
