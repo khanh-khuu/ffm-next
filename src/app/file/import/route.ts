@@ -23,18 +23,10 @@ async function downloadYoutube2(
   url: string,
   outputPath: string
 ): Promise<string> {
-  const endpoint = "https://ffm-next.khanhkhuu.workers.dev/?url=" + url;
-  try {
-  const { data } = await axios.get<CliptoResponse>(endpoint);
-
-  const desc = data.title;
-  const downloadUrl = data.medias.find(x => x.extension === 'mp4' && x.is_audio)?.url;
-
-  console.log('downloadUrl ==========> ', downloadUrl);
-
+  
   const fileResponse = await axios({
     method: "GET",
-    url: downloadUrl,
+    url: "https://ffm-next.khanhkhuu.workers.dev/?url=" + url,
     responseType: "stream",
     headers: {
       "Content-Type": "video/mp4",
@@ -47,12 +39,9 @@ async function downloadYoutube2(
 
   return new Promise((resolve) => {
     writer.on("finish", () => {
-      resolve(desc);
+      resolve(fileResponse.headers['X-Description']);
     });
   });
-  } catch (err: any) {
-    throw err;
-  }
 }
 
 async function downloadTiktok(url: string, outputPath: string): Promise<any> {
