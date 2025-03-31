@@ -30,6 +30,8 @@ async function downloadYoutube2(
   const desc = data.title;
   const downloadUrl = data.medias.find(x => x.extension === 'mp4' && x.is_audio)?.url;
 
+  console.log('downloadUrl ==========> ', downloadUrl);
+
   const fileResponse = await axios({
     method: "GET",
     url: downloadUrl,
