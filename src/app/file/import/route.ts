@@ -97,6 +97,36 @@ async function downloadTiktok(url: string, outputPath: string): Promise<any> {
   });
 }
 
+async function downloadTiktok2(url: string, outputPath: string) {
+  const endpoint = 'https://ilovetik.net/proxy.php';
+  const { data } = await axios.post<iLoveTikResponse>(endpoint, 
+    'url=' + url
+  );
+
+  const desc = data.api.description;
+
+  const fileResponse = await axios({
+    method: "GET",
+    url: data.api.previewUrl,
+    responseType: "stream",
+    headers: {
+      "Content-Type": "video/mp4",
+    },
+  });
+
+  const writer = fs.createWriteStream(outputPath);
+
+  fileResponse.data.pipe(writer);
+
+  return new Promise((resolve) => {
+    writer.on("finish", () => {
+      resolve(desc);
+    });
+  });
+
+} 
+
+
 async function downloadKuaishou(
   url: string,
   outputPath: string
@@ -207,7 +237,7 @@ function downloadVideo(url: string, outputPath: string) {
   } else if (youtubeRegex.test(url)) {
     return downloadYoutube2(url, outputPath);
   } else if (tiktokRegex.test(url)) {
-    return downloadTiktok(url, outputPath);
+    return downloadTiktok2(url, outputPath);
   } else if (kuaishouRegex.test(url)) {
     return downloadKuaishou(url, outputPath);
   } else {
