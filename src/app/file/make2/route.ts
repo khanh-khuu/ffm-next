@@ -53,7 +53,7 @@ export async function POST(request: Request) {
     }*in_w:${Number(crop.y) / 100}*in_h[origin]`,
     `[origin]scale=${width}:${Math.ceil(height * 0.7)},setsar=1:1[origin]`,
     `[origin]pad=iw:1.3*ih:color=white,eq=brightness=-0.05:contrast=0.95:saturation=0.95[origin]`,
-    `[full]crop=${width}:${height}:0:0[output]`,
+    `[origin]crop=${width}:${height}:0:0[output]`,
     `[1]scale=${width / 4}:-1[logo]`,
     `[output][logo]overlay=(main_w-overlay_w)/2:(main_h-overlay_h)*${logoPosition}[output]`,
     // `[full]scale=${width}:${height},setsar=1:1,format=gbrp[output]`,
