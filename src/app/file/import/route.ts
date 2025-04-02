@@ -264,6 +264,7 @@ export async function GET(request: Request) {
     height: number;
     width: number;
   }>((resolve, reject) => {
+    
     ffmpeg.ffprobe(outputPath, function (err, metadata) {
       if (err) reject(err);
       else {

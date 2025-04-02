@@ -158,7 +158,7 @@ export default function Maker({ avatars }: { avatars: string[] }) {
   async function make() {
     setLoading(true);
     try {
-      await axios.post(`/file/make`, {
+      await axios.post(`/file/make2`, {
         crop,
         description,
         caption,
