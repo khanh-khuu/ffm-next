@@ -12,12 +12,12 @@ import {
   Image,
   NumberInput,
   SegmentedControl,
+  Select,
   Stack,
   Textarea,
   TextInput,
   useCombobox,
 } from "@mantine/core";
-import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import ReactCrop, { Crop } from "react-image-crop";
 // import { VideoThumbnailGenerator } from "browser-video-thumbnail-generator";
@@ -28,6 +28,7 @@ import listAvatars from "./_actions/listAvatars";
 import makeVideo1 from "./_actions/makeVideo1";
 import importVideo from "./_actions/importVideo";
 import uploadVideo from "./_actions/uploadVideo";
+import makeVideo2 from "./_actions/makeVideo2";
 
 export default function Maker() {
   const [url, setUrl] = useState("");
@@ -40,6 +41,7 @@ export default function Maker() {
   const [loading, setLoading] = useState(false);
   const thumbnailRef = useRef(null);
   const [avatars, setAvatars] = useState<string[]>([]);
+  const [processMode, setProcessMode] = useState('2');
   const avatarCombobox = useCombobox({
     onDropdownClose: () => avatarCombobox.resetSelectedOption(),
   });
@@ -158,7 +160,8 @@ export default function Maker() {
   async function make() {
     setLoading(true);
     try {
-      await makeVideo1({
+      const makeVideo = processMode === '1' ? makeVideo1 : makeVideo2;
+      await makeVideo({
         crop,
         description,
         caption,
@@ -282,6 +285,11 @@ export default function Maker() {
             value={duration}
             onChange={(val) => setDuration(Number(val))}
           />
+
+          <Select label="Process mode" data={['1', '2'].map(x => ({
+            label: 'Mode ' + x,
+            value: x,
+          }))} value={processMode} onChange={(val) => setProcessMode(val!)} />
 
           <Button onClick={make} loading={loading} disabled={loading}>
             Make
