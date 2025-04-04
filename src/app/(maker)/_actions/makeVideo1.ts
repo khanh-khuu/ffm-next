@@ -1,3 +1,5 @@
+"use server";
+
 import axios from "axios";
 import _ from "lodash";
 import { Crop } from "react-image-crop";
@@ -6,26 +8,19 @@ import removeEmojis from "@/helper/removeEmoji";
 import removeHashTag from "@/helper/removeHashTag";
 import { BASE_URL, GITHUB_ENDPOINT } from "@/constant";
 
-export async function POST(request: Request) {
-  const {
-    crop,
-    description,
-    caption,
-    avatar,
-    speed,
-  }: {
-    crop: Crop;
-    description: string;
-    caption: string;
-    avatar: string;
-    speed: string;
-  } = await request.json();
+interface MakeVideoPayload {
+  crop: Crop;
+  description: string;
+  caption: string;
+  avatar: string;
+  speed: string;
+}
+
+export default async function makeVideo1(payload: MakeVideoPayload) {
+  const { crop, description, caption, avatar, speed } = payload;
 
   const caps = removeEmojis(removeHashTag(caption)).trim();
   const githubName = generateGithubName(description);
-
-  // const url = new URL(request.url);
-  // const baseUrl = `${url.protocol}//${url.host}`;
 
   const vid_url = `${BASE_URL}/file/input.mp4`;
   const width = 1080;
@@ -72,15 +67,8 @@ export async function POST(request: Request) {
 
   cmd += `" -map "[video]" -map "[audio]" -shortest output.mp4`;
 
-  if (!process.env.GITHUB_TOKEN) {
-    return Response.json(
-      {
-        error: "Github Token is missing.",
-      },
-      { status: 400 }
-    );
-  }
-
+  if (!process.env.GITHUB_TOKEN) throw new Error("Github Token is missing.");
+  
   const {
     data: { workflows },
   } = await axios.get(`${GITHUB_ENDPOINT}/actions/workflows`, {
@@ -90,11 +78,7 @@ export async function POST(request: Request) {
     },
   });
 
-  if (workflows.length === 0)
-    return Response.json({
-      success: false,
-      error: "Workflow not found.",
-    });
+  if (workflows.length === 0) throw new Error("Workflow not found.");
 
   const endpoint = `${GITHUB_ENDPOINT}/actions/workflows/${workflows[0].id}/dispatches`;
   try {
@@ -115,12 +99,8 @@ export async function POST(request: Request) {
         },
       }
     );
-    return Response.json({
-      success: true,
-    });
+    return true;
   } catch (err: any) {
-    return Response.json(err.response.data, {
-      status: err.response.data.status,
-    });
+    throw new Error(err.response.data);
   }
 }

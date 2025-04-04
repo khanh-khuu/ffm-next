@@ -24,7 +24,10 @@ import ReactCrop, { Crop } from "react-image-crop";
 import removeHashTag from "@/helper/removeHashTag";
 import removeEmojis from "@/helper/removeEmoji";
 import { IconUpload } from "@tabler/icons-react";
-import { listAvatars } from "./_actions/listAvatars";
+import listAvatars from "./_actions/listAvatars";
+import makeVideo1 from "./_actions/makeVideo1";
+import importVideo from "./_actions/importVideo";
+import uploadVideo from "./_actions/uploadVideo";
 
 export default function Maker() {
   const [url, setUrl] = useState("");
@@ -97,11 +100,7 @@ export default function Maker() {
   async function uploadFile(file: File | null) {
     if (!file) return;
     setLoading(true);
-    const formData = new FormData();
-    formData.append("file", file);
-    const {
-      data: { description, thumbnail, duration, height, width },
-    } = await axios.postForm("/file/upload", formData);
+    const { description, thumbnail, duration, height, width } = await uploadVideo(file);
     setOriginalDuration(duration);
     setDuration(duration);
     setUrl("");
@@ -126,9 +125,9 @@ export default function Maker() {
   async function startImport() {
     // generator.current?.revokeUrls();
     setLoading(true);
-    const {
-      data: { description, thumbnail, duration, height, width },
-    } = await axios.get("/file/import?url=" + url);
+
+    const { description, thumbnail, duration, height, width } =
+      await importVideo(url);
     setOriginalDuration(duration);
     setDuration(duration);
     setUrl("");
@@ -159,7 +158,7 @@ export default function Maker() {
   async function make() {
     setLoading(true);
     try {
-      await axios.post(`/file/make`, {
+      await makeVideo1({
         crop,
         description,
         caption,
@@ -185,8 +184,8 @@ export default function Maker() {
   }
 
   useEffect(() => {
-    listAvatars().then(result => setAvatars(result));
-  }, [])
+    listAvatars().then((result) => setAvatars(result));
+  }, []);
 
   return (
     <Box>
@@ -205,11 +204,7 @@ export default function Maker() {
         </Button>
         <FileButton onChange={(file) => uploadFile(file)} accept="video/mp4">
           {(props) => (
-            <Button
-              {...props}
-              variant="subtle"
-              disabled={loading}
-            >
+            <Button {...props} variant="subtle" disabled={loading}>
               <IconUpload />
             </Button>
           )}

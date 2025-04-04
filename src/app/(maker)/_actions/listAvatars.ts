@@ -3,7 +3,7 @@
 import path from 'path';
 import fs from 'fs';
 
-export async function listAvatars() {
+export default async function listAvatars() {
     const tempPath = path.join(process.cwd(), 'public', 'avatars');
     
     if (!fs.existsSync(tempPath)){
