@@ -1,10 +1,10 @@
+'use server'
+
 import axios from "axios";
 
-export async function GET(request: Request, { params }: any) {
-  const { userId } = await params;
-
+export async function getView(videoId: string): Promise<Statistics> {
   const { data } = await axios.get(
-    "https://tiktok.livecounts.io/user/videoList/" + userId,
+    "https://tiktok.livecounts.io/video/stats/" + videoId,
     {
       headers: {
         "User-Agent":
@@ -16,5 +16,5 @@ export async function GET(request: Request, { params }: any) {
       },
     }
   );
-  return Response.json(data);
+  return data;
 }

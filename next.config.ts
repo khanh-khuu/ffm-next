@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
 
     return config;
   },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '500mb'
+    }
+  }
   // output: "standalone"
 };
 

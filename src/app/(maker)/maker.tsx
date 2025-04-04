@@ -18,14 +18,15 @@ import {
   useCombobox,
 } from "@mantine/core";
 import axios from "axios";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ReactCrop, { Crop } from "react-image-crop";
 // import { VideoThumbnailGenerator } from "browser-video-thumbnail-generator";
 import removeHashTag from "@/helper/removeHashTag";
 import removeEmojis from "@/helper/removeEmoji";
 import { IconUpload } from "@tabler/icons-react";
+import { listAvatars } from "./_actions/listAvatars";
 
-export default function Maker({ avatars }: { avatars: string[] }) {
+export default function Maker() {
   const [url, setUrl] = useState("");
   const [description, setDescription] = useState("");
   const [caption, setCaption] = useState("");
@@ -33,9 +34,9 @@ export default function Maker({ avatars }: { avatars: string[] }) {
   const [duration, setDuration] = useState(0);
   const [avatar, setAvatar] = useState("transparent.png");
   const [thumbnail, setThumbnail] = useState("");
-  // const generator = useRef<VideoThumbnailGenerator | null>(null);
   const [loading, setLoading] = useState(false);
   const thumbnailRef = useRef(null);
+  const [avatars, setAvatars] = useState<string[]>([]);
   const avatarCombobox = useCombobox({
     onDropdownClose: () => avatarCombobox.resetSelectedOption(),
   });
@@ -182,6 +183,10 @@ export default function Maker({ avatars }: { avatars: string[] }) {
     setThumbnail("");
     setAvatar("transparent.png");
   }
+
+  useEffect(() => {
+    listAvatars().then(result => setAvatars(result));
+  }, [])
 
   return (
     <Box>

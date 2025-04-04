@@ -5,6 +5,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 // import { useLocalStorage } from "@mantine/hooks";
 import LivePost from "./LivePost";
+import { getUser } from "./_actions/getUser";
 
 export default function Counter() {
   const [userName, setUserName] = useState("");
@@ -35,20 +36,9 @@ export default function Counter() {
   async function fetchUser() {
     setLoading(true);
 
-    const { data } = await axios.get<CounterViewUser>(
-      `/counter/user/${userName}`,
-      {
-        headers: {
-          "Cache-Control": "no-cache",
-          Pragma: "no-cache",
-          Expires: "0",
-        },
-      }
-    );
+    const {id, userId, username, stats} = await getUser(userName);
 
-    const {id, userId, username, stats} = data;
-
-    const newUsers = [ {id, userId, username, stats, avatar: ''}, ...users.filter(x => x.userId !== data.userId)];
+    const newUsers = [ {id, userId, username, stats, avatar: ''}, ...users.filter(x => x.userId !== userId)];
     
     setUsers(newUsers);
     setUserName("");

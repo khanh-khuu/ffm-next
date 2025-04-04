@@ -11,6 +11,9 @@ import { IconUpload, IconVideo, IconX } from "@tabler/icons-react";
 import MediaCard from "./MediaCard";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import getListMedia from "./_actions/getListMedia";
+import { uploadMedia } from "./_actions/uploadMedia";
+import deleteMedia from "./_actions/deleteMedia";
 
 export default function Media() {
   const [media, setMedia] = useState<string[]>([]);
@@ -19,22 +22,24 @@ export default function Media() {
   async function onDrop(files: FileWithPath[]) {
     setLoading(true);
     for (const file of files) {
-      const formData = new FormData();
-      formData.set("file", file);
-      await axios.postForm(`/media/upload`, formData);
+      // const formData = new FormData();
+      // formData.set("file", file);
+      // await axios.postForm(`/media/upload`, formData);
+      await uploadMedia(file);
       await listMedia();
     }
     setLoading(false);
   }
 
-  async function deleteMedia(file: string) {
-    await axios.delete(`/media/${file}`);
+  async function onDeleteMedia(file: string) {
+    await deleteMedia(file);
     await listMedia();
   }
 
   async function listMedia() {
-    const { data } = await axios.get<string[]>("/media/list");
-    setMedia(data);
+    const medias = await getListMedia();
+    // const { data } = await axios.get<string[]>("/media/list");
+    setMedia(medias);
   }
 
   useEffect(() => {
@@ -95,7 +100,7 @@ export default function Media() {
           }}
         >
           {media.map((x) => (
-            <MediaCard key={x} file={x} onDelete={deleteMedia} />
+            <MediaCard key={x} file={x} onDelete={onDeleteMedia} />
           ))}
         </SimpleGrid>
       )}

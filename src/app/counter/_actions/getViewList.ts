@@ -1,10 +1,9 @@
+'use server'
 import axios from "axios";
 
-export async function GET(request: Request, { params }: any) {
-  const { videoId } = await params;
-
+export async function getViewList(userId: string): Promise<CounterViewResponse> {
   const { data } = await axios.get(
-    "https://tiktok.livecounts.io/video/stats/" + videoId,
+    "https://tiktok.livecounts.io/user/videoList/" + userId,
     {
       headers: {
         "User-Agent":
@@ -16,5 +15,5 @@ export async function GET(request: Request, { params }: any) {
       },
     }
   );
-  return Response.json(data);
+  return data;
 }

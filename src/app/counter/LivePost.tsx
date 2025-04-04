@@ -26,6 +26,8 @@ import {
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import SlotCounter from "react-slot-counter";
+import { getView } from "./_actions/getView";
+import { getViewList } from "./_actions/getViewList";
 
 export default function LivePost({
   data,
@@ -53,13 +55,10 @@ export default function LivePost({
 
   async function getLatestVideo() {
     try {
-      const res = await axios.get<CounterViewResponse>(
-        "/counter/views/" + data.userId
-      );
-
-      setPost(res.data.userData[0]);
-      if (res.data.userData[0]) {
-        const latestPost = res.data.userData[0];
+      const viewList = await getViewList(data.userId);
+      setPost(viewList.userData[0]);
+      if (viewList.userData[0]) {
+        const latestPost = viewList.userData[0];
         setPost(latestPost);
       }
     } catch (err) {
@@ -69,7 +68,7 @@ export default function LivePost({
 
   async function getStat() {
     if (!post) return;
-    const { data } = await axios.get<Statistics>("/counter/view/" + post.id);
+    const data = await getView(post.id);
     setPost({
       ...post,
       statistics: data,

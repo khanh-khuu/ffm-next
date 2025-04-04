@@ -34,13 +34,3 @@ export async function GET(request: Request, { params }: any) {
     { headers }
   );
 }
-
-export async function DELETE(equest: Request, { params }: any) {
-  const { fileName } = await params;
-
-  fs.unlinkSync(`/tmp/media/${fileName}`);
-
-  return Response.json({
-    success: true
-  })
-}

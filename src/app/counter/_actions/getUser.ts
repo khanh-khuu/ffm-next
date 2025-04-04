@@ -1,8 +1,8 @@
+'use server'
+
 import axios from "axios";
 
-export async function GET(request: Request, { params }: any) {
-  const { userName } = await params;
-
+export async function getUser(userName: string): Promise<CounterViewUser> {
   const { data } = await axios.get(
     "https://tiktok.livecounts.io/user/data/" + userName,
     {
@@ -16,5 +16,5 @@ export async function GET(request: Request, { params }: any) {
       },
     }
   );
-  return Response.json(data);
+  return data;
 }

@@ -1,18 +1,12 @@
+'use server'
+
 import path from "path";
 import fs from "fs";
 
-export async function POST(request: Request) {
-  const formData = await request.formData();
-  const file = formData.get("file");
+export async function uploadMedia(file: File) {
+//   const file = formData.get("file");
 
-  if (!file) {
-    return Response.json(
-      {
-        error: "No file received.",
-      },
-      { status: 400 }
-    );
-  }
+  if (!file) throw new Error("No file received.");
 
   const buffer = Buffer.from(await (file as File).arrayBuffer());
 
@@ -25,7 +19,7 @@ export async function POST(request: Request) {
   const outputPath = path.join('/tmp', 'media', fileName);
   fs.writeFileSync(outputPath, buffer);
 
-  return Response.json({
+  return {
     url: `/media/${fileName}`
-  });
+  };
 }
