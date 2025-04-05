@@ -68,7 +68,7 @@ export default async function makeVideo2(payload: MakeVideoPayload) {
     cmd += [
         `[0]scale=${width}*1.5:${height}*1.75[scaled]`,
         '[scaled]rotate=0.4 * (1 + sin(n/100))*PI/180[rotated]',
-        `[rotated]crop=${width}:${height}:(in_w-out_w)/2 + 0.35 * (1 + sin(n/100))*(in_w-out_w)/2:(in_h-out_h)/2 + 0.16 * (1 + cos(n/57))*(in_h-out_h)/2[cropped]`,
+        `[rotated]crop=${width}:${height}:(in_w-out_w)/2 + 0.4 * (1 + sin(n/100))*(in_w-out_w)/2:(in_h-out_h)/2 + 0.2 * (1 + cos(n/57))*(in_h-out_h)/2[cropped]`,
         '[cropped]eq=brightness=0.05:contrast=1.03:saturation=1.05[eq]',
         '[eq]hqdn3d=4.0:3.0:6.0:4.5,unsharp=5:5:1.0:5:5:0.0[output]',
         ...captions,
