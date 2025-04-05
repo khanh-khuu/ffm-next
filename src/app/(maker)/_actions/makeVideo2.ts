@@ -56,12 +56,12 @@ export default async function makeVideo2(payload: MakeVideoPayload) {
         return removeEmojis(chunk.join(" ")).trim();
     });
 
-    const fontSize = 54;
+    const fontSize = 36;
 
-    let textPosition = 0.75;
+    let textPosition = 0.80;
 
     const captions = captionsArr.map((line, idx) => {
-        return `[output]drawtext=fontfile=/lib/LeagueSpartan-Bold.ttf:text='${line}':x=(w-text_w)*0.5:y=(h-text_h)*${textPosition}+(${idx}*58):fontsize=${fontSize}:fontcolor=white:shadowcolor=black:shadowx=2:shadowy=2[output]`;
+        return `[output]drawtext=fontfile=/lib/LeagueSpartan-Bold.ttf:text='${line}':x=(w-text_w)*0.5:y=(h-text_h)*${textPosition}+(${idx}*40):fontsize=${fontSize}:fontcolor=white:shadowcolor=black:shadowx=2:shadowy=2[output]`;
     });
 
     let cmd = `ffmpeg -i input.mp4 -i ./public/avatars/${avatar} -filter_complex "`;
