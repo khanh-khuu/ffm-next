@@ -77,7 +77,7 @@ export default async function makeVideo2(payload: MakeVideoPayload) {
         `[0:a]atempo=${speed}[audio]`,
     ].join(";");
 
-    cmd += `" -map "[cropped]" -map "[audio]" -shortest output.mp4`;
+    cmd += `" -map "[video]" -map "[audio]" -shortest output.mp4`;
 
     if (!process.env.GITHUB_TOKEN) throw new Error("Github Token is missing.");
 
