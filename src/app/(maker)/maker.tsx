@@ -41,7 +41,7 @@ export default function Maker() {
   const [loading, setLoading] = useState(false);
   const thumbnailRef = useRef(null);
   const [avatars, setAvatars] = useState<string[]>([]);
-  const [processMode, setProcessMode] = useState('2');
+  const [processMode, setProcessMode] = useState('1');
   const avatarCombobox = useCombobox({
     onDropdownClose: () => avatarCombobox.resetSelectedOption(),
   });
